@@ -6,21 +6,33 @@ type Protocoltext = {
     Content: string list
 }
 
+
+type SearchComponent = 
+    {
+    Key: OntologyAnnotation 
+    KeyType: CompositeHeaderDiscriminate 
+    Body: CompositeCell 
+    }
+
 type Annotation = 
     {
-        Key: OntologyAnnotation option
-        Value: CompositeCell option
-        IsOpen: bool 
-        Height: float
+    IsOpen: bool
+    Search: SearchComponent
     } 
-    static member init (?key,?value,?isOpen, ?height) = 
+
+    static member init (key,body ,?keyType, ?isOpen,  ?search ) = 
         let isOpen = defaultArg isOpen true
-        let height = defaultArg height 0.0
-        {
+        let keyType = defaultArg keyType CompositeHeaderDiscriminate.Parameter
+        let search = defaultArg search {
             Key= key
-            Value= value
+            KeyType= keyType
+            Body= body
+            }
+
+        {
             IsOpen= isOpen
-            Height= height
+            Search = search
+
         }
     member this.ToggleOpen () = {this with IsOpen = not this.IsOpen}
 

@@ -90,6 +90,7 @@ type BOATelement =
                                                     // List.removeAt (List.filter (fun x -> x = a) state) state
                                                     setState newAnnoList
                                                 )
+                                                
                                             ]
                                             Bulma.input.text [
                                                 input.isSmall
