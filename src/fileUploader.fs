@@ -5,6 +5,7 @@ open Types
 open Fable.SimpleJson
 open Feliz.Bulma
 open System.Text.RegularExpressions
+open ARCtrl
 
 
 module private FileReaderHelper =
@@ -46,26 +47,19 @@ module Highlight =
   let keyList(annoList: Annotation list) = 
     [|
         for a in annoList do
-            (a.Search.Key |> Option.map (fun e -> e.Name.Value)|> Option.defaultValue "")
+          a.Search.Key.NameText
     |]
   let valuelist(annoList: Annotation list) = 
     [|
         for a in annoList do
-            (a.Value |> Option.map (fun e -> e.ToString()) |> Option.defaultValue "" )
+          match a.Search.Body with
+            | CompositeCell.Term oa -> oa.NameText
+            | CompositeCell.Unitized (v,oa) -> oa.NameText
+            |_ -> ()
     |]
 
   // let allList (annoList: Annotation list) =
   //   keyList(annoList) @ valuelist(annoList)
-
-
-  let highlightAnnos(text: string, list: string list) =
-      // let keyHighlighttext =
-        List.fold (fun (acc: string) key -> 
-          acc.Replace(key, $"<mark>{key}</mark>")
-        ) text list
-
-
-        
 
       // List.fold (fun (acc: string) value -> 
       //   acc.Replace(value, $"<mark>{value}</mark>")

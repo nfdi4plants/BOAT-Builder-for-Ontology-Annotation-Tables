@@ -14,7 +14,7 @@ module Jsonkeys =
     [<Literal>]
     let Key = "key"
     [<Literal>]
-    let Value = "value"
+    let Body = "Body"
     [<Literal>]
     let IsOpen = "isOpen"
     [<Literal>]
@@ -23,22 +23,26 @@ module Jsonkeys =
 
 let encoderAnno (anno: Annotation) = //encodes annotation to json         
     [
-        Encode.tryInclude Jsonkeys.Key OntologyAnnotation.encoder (anno.Key)
-        Encode.tryInclude Jsonkeys.Value CompositeCell.encoder (anno.Value)
+        Encode.tryInclude Jsonkeys.Key OntologyAnnotation.encoder (Some anno.Search.Key)
+        Encode.tryInclude Jsonkeys.Body CompositeCell.encoder (Some anno.Search.Body)
         Encode.tryInclude Jsonkeys.IsOpen Encode.bool (Some anno.IsOpen)
         Encode.tryInclude Jsonkeys.Height Encode.float (Some anno.Height)
     ]
-    |> Encode.choose //only chosse some
+    |> Encode.choose
     |> Encode.object
+
 
 
 let decoderAnno : Decoder<Annotation list> = //decodes json to annotation  
     Decode.list (
         Decode.object (fun get ->
             {
-            Key = get.Optional.Field Jsonkeys.Key OntologyAnnotation.decoder 
-            Value = get.Optional.Field Jsonkeys.Value CompositeCell.decoder
             IsOpen = get.Required.Field Jsonkeys.IsOpen Decode.bool
+            Search = {
+                Key = get.Required.Field  Jsonkeys.Key OntologyAnnotation.decoder
+                KeyType =  CompositeHeaderDiscriminate.Parameter
+                Body = get.Required.Field  Jsonkeys.Body CompositeCell.decoder
+                }
             Height = get.Required.Field Jsonkeys.Height Decode.float
             }
         )

@@ -20,117 +20,117 @@ module List =
 
 // module Helperfunctions =
     
-type BOATelement =
-    static member annoBlock (annoState: Annotation list, setState: Annotation list -> unit, index: int) =
+// type BOATelement =
+//     static member annoBlock (annoState: Annotation list, setState: Annotation list -> unit, index: int) =
 
-        let revIndex = annoState.Length - 1 - index
-        let a = annoState.[revIndex]
+//         let revIndex = annoState.Length - 1 - index
+//         let a = annoState.[revIndex]
 
-        let updateAnnotation (func:Annotation -> Annotation) =
-            let nextA = func a
-            annoState |> List.mapi (fun i a ->
-                if i = revIndex then nextA else a 
-            ) |> setState
+//         let updateAnnotation (func:Annotation -> Annotation) =
+//             let nextA = func a
+//             annoState |> List.mapi (fun i a ->
+//                 if i = revIndex then nextA else a 
+//             ) |> setState
 
-        let annosAfterCurrent: Annotation list = 
-            let splittedList = List.splitAt revIndex annoState
-            let before, after = splittedList
-            after
+//         let annosAfterCurrent: Annotation list = 
+//             let splittedList = List.splitAt revIndex annoState
+//             let before, after = splittedList
+//             after
         
-        Bulma.block [
-            prop.style [
-                style.position.absolute
-                //if a.IsOpen = true then annoState |> List.map (fun e -> style.top (int e.Height + 40)) 
-                //else style.top (int a.Height)
-                style.top (int a.Height)
-            ]
-            prop.children [
-                Bulma.block [
-                    if a.IsOpen = false then 
-                        Html.button [
-                            Html.i [
-                                prop.className "fa-solid fa-comment-dots"
-                                prop.style [style.color "#ffe699"]
-                                prop.onClick (fun e ->
-                                    (annoState |> List.mapi (fun i e ->
-                                        if i = revIndex then e.ToggleOpen() 
-                                        else {e with IsOpen = false}
-                                    )) |> setState 
-                                    // updateAnnotation (fun a -> a.ToggleOpen())                              
-                                )
-                            ]
-                        ] 
-                    else
-                        Html.div [
-                            prop.className "bg-[#ffe699] p-3 text-black z-50 max-w-96 mb-20"
-                            prop.children [
-                                Bulma.columns [
-                                    Bulma.column [
-                                        column.is1
-                                        prop.className "hover:bg-[#ffd966] cursor-pointer"
-                                        prop.onClick (fun e -> updateAnnotation (fun a -> a.ToggleOpen())
+//         Bulma.block [
+//             prop.style [
+//                 style.position.absolute
+//                 //if a.IsOpen = true then annoState |> List.map (fun e -> style.top (int e.Height + 40)) 
+//                 //else style.top (int a.Height)
+//                 style.top (int a.Height)
+//             ]
+//             prop.children [
+//                 Bulma.block [
+//                     if a.IsOpen = false then 
+//                         Html.button [
+//                             Html.i [
+//                                 prop.className "fa-solid fa-comment-dots"
+//                                 prop.style [style.color "#ffe699"]
+//                                 prop.onClick (fun e ->
+//                                     (annoState |> List.mapi (fun i e ->
+//                                         if i = revIndex then e.ToggleOpen() 
+//                                         else {e with IsOpen = false}
+//                                     )) |> setState 
+//                                     // updateAnnotation (fun a -> a.ToggleOpen())                              
+//                                 )
+//                             ]
+//                         ] 
+//                     else
+//                         Html.div [
+//                             prop.className "bg-[#ffe699] p-3 text-black z-50 max-w-96 mb-20"
+//                             prop.children [
+//                                 Bulma.columns [
+//                                     Bulma.column [
+//                                         column.is1
+//                                         prop.className "hover:bg-[#ffd966] cursor-pointer"
+//                                         prop.onClick (fun e -> updateAnnotation (fun a -> a.ToggleOpen())
                                         
-                                        )
-                                        prop.children [
-                                            Html.span [
-                                                Html.i [
-                                                    prop.className "fa-solid fa-chevron-left"
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                    Bulma.column [
-                                        prop.className "space-y-2"
-                                        prop.children [
-                                            Html.span "Key: "
-                                            Html.span [
-                                                prop.className "delete float-right mt-0"
-                                                prop.onClick (fun _ -> 
-                                                    let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = a |> not)  
-                                                    // List.removeAt (List.filter (fun x -> x = a) state) state
-                                                    setState newAnnoList
-                                                )
+//                                         )
+//                                         prop.children [
+//                                             Html.span [
+//                                                 Html.i [
+//                                                     prop.className "fa-solid fa-chevron-left"
+//                                                 ]
+//                                             ]
+//                                         ]
+//                                     ]
+//                                     Bulma.column [
+//                                         prop.className "space-y-2"
+//                                         prop.children [
+//                                             Html.span "Key: "
+//                                             Html.span [
+//                                                 prop.className "delete float-right mt-0"
+//                                                 prop.onClick (fun _ -> 
+//                                                     let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = a |> not)  
+//                                                     // List.removeAt (List.filter (fun x -> x = a) state) state
+//                                                     setState newAnnoList
+//                                                 )
                                                 
-                                            ]
-                                            Bulma.input.text [
-                                                input.isSmall
-                                                prop.value (a.Key|> Option.map (fun e -> e.Name.Value) |> Option.defaultValue "")
-                                                prop.className ""
-                                                prop.onChange (fun (x: string)-> 
-                                                    let updatetedAnno = 
-                                                        {a with Key = OntologyAnnotation(name = x) |> Some}
+//                                             ]
+//                                             Bulma.input.text [
+//                                                 input.isSmall
+//                                                 prop.value (a.Search.Key|> Option.map (fun e -> e.Name.Value) |> Option.defaultValue "")
+//                                                 prop.className ""
+//                                                 prop.onChange (fun (x: string)-> 
+//                                                     let updatetedAnno = 
+//                                                         {a with Key = OntologyAnnotation(name = x) |> Some}
 
-                                                    let newAnnoList: Annotation list =
-                                                        annoState
-                                                        |> List.map (fun elem -> if elem = a then updatetedAnno else elem)
+//                                                     let newAnnoList: Annotation list =
+//                                                         annoState
+//                                                         |> List.map (fun elem -> if elem = a then updatetedAnno else elem)
 
-                                                    setState newAnnoList
-                                                )
-                                            ]
-                                            Html.p "Value: "
-                                            Bulma.input.text [
-                                                input.isSmall
-                                                prop.value (a.Value|> Option.map (fun e -> e.ToString()) |> Option.defaultValue "" )
-                                                prop.className ""
-                                                prop.onChange (fun (x:string) -> 
-                                                    let updatetedAnno = 
-                                                        {a with Value = CompositeCell.createFreeText(x) |> Some}
+//                                                     setState newAnnoList
+//                                                 )
+//                                             ]
+//                                             Html.p "Value: "
+//                                             Bulma.input.text [
+//                                                 input.isSmall
+//                                                 prop.value (a.Value|> Option.map (fun e -> e.ToString()) |> Option.defaultValue "" )
+//                                                 prop.className ""
+//                                                 prop.onChange (fun (x:string) -> 
+//                                                     let updatetedAnno = 
+//                                                         {a with Value = CompositeCell.createFreeText(x) |> Some}
                                                         
-                                                    let newAnnoList: Annotation list =
-                                                        annoState
-                                                        |> List.map (fun elem -> if elem = a then updatetedAnno else elem)
+//                                                     let newAnnoList: Annotation list =
+//                                                         annoState
+//                                                         |> List.map (fun elem -> if elem = a then updatetedAnno else elem)
 
-                                                    setState newAnnoList
-                                                )
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]  
-                        ]
-                ]
-            ]
-        ]
+//                                                     setState newAnnoList
+//                                                 )
+//                                             ]
+//                                         ]
+//                                     ]
+//                                 ]
+//                             ]  
+//                         ]
+//                 ]
+//             ]
+//         ]
 
 
 type Builder =
@@ -249,7 +249,7 @@ type Builder =
                                         prop.className "relative"
                                         prop.children [
                                             for a in 0 .. annoState.Length - 1 do
-                                                BOATelement.annoBlock (annoState, setState, a)    
+                                                App.Components.AnnoBlockwithSwate(annoState, setState, a)    
                                         ]
                                     ]
                                 ]
