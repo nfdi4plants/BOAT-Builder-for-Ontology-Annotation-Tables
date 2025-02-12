@@ -46,12 +46,12 @@ module Highlight =
   let keyList(annoList: Annotation list) = 
     [|
         for a in annoList do
-            (a.Search.Key |> Option.map (fun e -> e.Name.Value)|> Option.defaultValue "")
+            (a.Search.Key.NameText)
     |]
   let valuelist(annoList: Annotation list) = 
     [|
         for a in annoList do
-            (a.Value |> Option.map (fun e -> e.ToString()) |> Option.defaultValue "" )
+            (a.Search.Body.ToString())
     |]
 
   // let allList (annoList: Annotation list) =

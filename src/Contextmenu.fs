@@ -56,7 +56,7 @@ module private Functions =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = Annotation.init(OntologyAnnotation(term), height = yCoordinateOfSelection)::closedList
+            let newAnnoList = Annotation.init(OntologyAnnotation(term),body = CompositeCell.createFreeText(""), height = yCoordinateOfSelection)::closedList
             setState newAnnoList
             // let newAnnoList = Annotation.init(OntologyAnnotation(term), height = yCoordinateOfSelection)::state
             // setState newAnnoList
@@ -83,7 +83,7 @@ module private Functions =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = Annotation.init(value = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)::closedList
+            let newAnnoList = Annotation.init(key = OntologyAnnotation"", body = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)::closedList
             setState newAnnoList
         // let newAnnoList = Annotation.init(value = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)::state
         // setState newAnnoList
@@ -100,7 +100,7 @@ module private Functions =
         let term = window.getSelection().ToString().Trim()
         if term.Length <> 0 then 
             let updatetedAnno = 
-                {state.[0] with Key = OntologyAnnotation(name = term) |> Some}
+                {state.[0] with Search.Key = OntologyAnnotation(name = term)}
 
             let newAnnoList =
                 state
@@ -112,7 +112,7 @@ module private Functions =
         let term = window.getSelection().ToString().Trim()
         if term.Length <> 0 then 
             let updatetedAnno = 
-                {state.[0] with Value = CompositeCell.createFreeText(term) |> Some}
+                {state.[0] with Search.Body = CompositeCell.createFreeText(term)}
 
             let newAnnoList =
                 state

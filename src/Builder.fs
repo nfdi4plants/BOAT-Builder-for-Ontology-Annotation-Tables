@@ -94,11 +94,11 @@ type BOATelement =
                                             ]
                                             Bulma.input.text [
                                                 input.isSmall
-                                                prop.value (a.Key|> Option.map (fun e -> e.Name.Value) |> Option.defaultValue "")
+                                                prop.value (a.Search.Key.NameText)
                                                 prop.className ""
                                                 prop.onChange (fun (x: string)-> 
                                                     let updatetedAnno = 
-                                                        {a with Key = OntologyAnnotation(name = x) |> Some}
+                                                        {a with Search.Key = OntologyAnnotation(name = x)}
 
                                                     let newAnnoList: Annotation list =
                                                         annoState
@@ -110,11 +110,11 @@ type BOATelement =
                                             Html.p "Value: "
                                             Bulma.input.text [
                                                 input.isSmall
-                                                prop.value (a.Value|> Option.map (fun e -> e.ToString()) |> Option.defaultValue "" )
+                                                prop.value (a.Search.Body.ToString() )
                                                 prop.className ""
                                                 prop.onChange (fun (x:string) -> 
                                                     let updatetedAnno = 
-                                                        {a with Value = CompositeCell.createFreeText(x) |> Some}
+                                                        {a with Search.Body = CompositeCell.createFreeText(x) }
                                                         
                                                     let newAnnoList: Annotation list =
                                                         annoState
