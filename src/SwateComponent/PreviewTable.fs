@@ -3,7 +3,6 @@ namespace Components
 open Feliz
 open ARCtrl
 open Feliz.DaisyUI
-open Shared
 open Types
 
 module PreviewTable =

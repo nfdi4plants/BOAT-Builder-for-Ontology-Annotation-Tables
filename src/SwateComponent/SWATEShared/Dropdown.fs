@@ -5,6 +5,7 @@ open Feliz.DaisyUI
 open BuildingBlock
 open ARCtrl
 open Shared
+open Types
 
 
 

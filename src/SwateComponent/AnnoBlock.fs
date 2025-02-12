@@ -48,7 +48,7 @@ module Searchblock =
         ]
 
     [<ReactComponent>]
-    let SearchElementKey (ui, setUi,annoState, setAnnoState, a) = //missing ui and setui for dropdown
+    let SearchElementKey (ui, setUi,annoState: Annotation list, setAnnoState, a) = //missing ui and setui for dropdown
         let element = React.useElementRef()
         Html.div [
             prop.ref element // The ref must be place here, otherwise the portalled term select area will trigger daisy join syntax

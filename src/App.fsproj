@@ -12,9 +12,22 @@
     <Compile Include="Mammoth.fs" />
     <Compile Include="Highlight.fs" />
     <Compile Include="fileUploader.fs" />
+    <Compile Include="SwateComponent\SWATEShared\Database.fs" />
+    <Compile Include="SwateComponent\SWATEShared\DTOS\ParentTermQueryDto.fs" />
+    <Compile Include="SwateComponent\SWATEShared\DTOS\TermQueryDto.fs" />
+    <Compile Include="SwateComponent\SWATEShared\StaticTermCollection.fs" />
+    <Compile Include="SwateComponent\SWATEShared\ARCtrl.Helper.fs" />
+    <Compile Include="SwateComponent\SWATEShared\BaseDropdown.fs" />
+    <Compile Include="SwateComponent\SWATEShared\ClickOutsideHandler.fs" />
+    <Compile Include="SwateComponent\SWATEShared\Model.fs" />
+    <Compile Include="SwateComponent\SWATEShared\Dropdown.fs" />
+    <Compile Include="SwateComponent\SWATEShared\GenericComponents.fs" />
+    <Compile Include="SwateComponent\SWATEShared\Helper.fs" />
+    <Compile Include="SwateComponent\SWATEShared\Shared.fs" />
+    <Compile Include="SwateComponent\SWATEShared\SwateExtensions.fs" />
+    <Compile Include="SwateComponent\TermSearchInput.fs" />
     <Compile Include="SwateComponent\AnnoBlock.fs" />
     <Compile Include="SwateComponent\PreviewTable.fs" />
-    <Compile Include="SwateComponent\TermSearchInput.fs" />
     <Compile Include="Builder.fs" />
     <Compile Include="NavBar.fs" />
     <Compile Include="Footer.fs" />
@@ -24,9 +37,11 @@
     <Compile Include="Main.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Fable.Remoting.Client" Version="7.32.0" />
     <PackageReference Include="Feliz" Version="2.8.0" />
     <PackageReference Include="Feliz.Bulma" Version="3.0.0" />
     <PackageReference Include="Fable.Promise" Version="3.2.0" />
+    <PackageReference Include="Feliz.DaisyUI" Version="4.2.1" />
     <PackageReference Include="Feliz.Router" Version="4.0.0" />
     <PackageReference Include="Fable.SimpleJson" Version="3.24.0" />
     <PackageReference Include="ARCtrl" Version="2.0.0-swate" />
