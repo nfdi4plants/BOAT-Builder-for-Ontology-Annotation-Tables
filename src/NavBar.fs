@@ -2,14 +2,17 @@ namespace Components
 
 open Feliz
 open Feliz.Bulma
+open Feliz.DaisyUI
 
 
 type NavBar =
-    static member Main(setPage: Types.Page -> unit, statePage: Types.Page) =
+    static member Main(setPage: Types.Page -> unit, statePage: Types.Page, annoState, setAnnoState) =
+        let modalState, toggleState = React.useState(false)
+
         let logo = StaticFile.import "./img/DataPLANT_logo_bg_transparent.svg"
         Bulma.navbar [
             navbar.isFixedTop
-            prop.className "select-none"
+            prop.className "select-none p-0"
             prop.children [
                 Bulma.navbarBrand.div [
                     Bulma.navbarItem.a [
@@ -31,6 +34,28 @@ type NavBar =
                             prop.className "hover:bg-[#3f8fae]"
                             prop.onClick (fun _ -> setPage(Types.Page.Builder)) 
                         ]
+                
+                        Bulma.navbarItem.a [ 
+                            prop.text "View annotations"
+                            prop.className "hover:bg-[#3f8fae]"
+                            prop.onClick (fun _ -> toggleState(true))
+                            prop.ariaHasPopup true
+                            prop.target "preview-modal"
+                        ]
+                        Bulma.modal [
+                            prop.id "preview-modal"
+                            if modalState then Bulma.modal.isActive
+                            prop.children [
+                                Bulma.modalBackground []
+                                Bulma.modalContent [
+                                     Bulma.box [
+                                        PreviewTable.table(annoState, setAnnoState)
+                                    ]
+                                ]
+                                Bulma.modalClose [ prop.onClick (fun _ -> toggleState(false))]
+                            ]
+                        ]
+
                         Bulma.navbarItem.a [ 
                             prop.text "Download"
                             prop.className "hover:bg-[#3f8fae]"

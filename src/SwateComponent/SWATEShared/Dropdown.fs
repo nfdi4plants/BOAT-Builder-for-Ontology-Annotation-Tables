@@ -241,7 +241,7 @@ let Main(state, setState, annoState: Annotation list, setAnnoState, a) =
             | DropdownPage.IOTypes iotype -> Html.none
             //     DropdownElements.dropdownContentIOTypeColumns iotype setState close model setModel
         ],
-        style=Components.Style.init("join-item dropdown text-white", Map [
+        style=Components.Style.init("join-item dropdown text-white z-50", Map [
             "content", Components.Style.init("!min-w-64")
         ])
     )

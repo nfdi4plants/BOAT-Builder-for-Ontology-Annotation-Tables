@@ -129,14 +129,14 @@ module Contextmenu =
         /// This element will remove the contextmenu when clicking anywhere else
         let buttonList = [
             button ("Add as new Key", resetter, state, addAnnotationKeyNew(state, setState, elementID), [])
-            button ("Add as new Value", resetter,state, addAnnotationValueNew(state, setState,elementID), []) 
+            button ("Add as new Term", resetter,state, addAnnotationValueNew(state, setState,elementID), []) 
             divider
             Html.div [ 
                 prop.className "text-gray-500 text-sm p-1"
                 prop.text "Add to last annotation .."
             ]
             button ("as Key", resetter,state, addToLastAnnoAsKey(state, setState),  [])
-            button ("as Value", resetter,state, addToLastAnnoAsValue(state, setState),  [])
+            button ("as Term", resetter,state, addToLastAnnoAsValue(state, setState),  [])
         ]
         Html.div [
             prop.tabIndex 0

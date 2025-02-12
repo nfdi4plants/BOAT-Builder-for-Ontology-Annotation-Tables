@@ -12,10 +12,10 @@ open Types
 
 module private Helperfuncs =
     let updateAnnotation (func:Annotation -> Annotation, indx: int, annoState: Annotation list, setState: Annotation list -> unit) =
-                let nextA = func annoState[indx]
-                annoState |> List.mapi (fun i a ->
-                    if i = indx  then nextA else a 
-                ) |> setState
+            let nextA = func annoState[indx]
+            annoState |> List.mapi (fun i a ->
+                if i = indx  then nextA else a 
+            ) |> setState
 
 module Searchblock =
 
@@ -141,14 +141,14 @@ type Components =
                 style.top (int a.Height)
             ]
             prop.children [
-            if annoState[index].IsOpen = false then 
+            if annoState[revIndex].IsOpen = false then 
                 Html.button [
                     Html.i [
                         prop.className "fa-solid fa-comment-dots"
                         prop.style [style.color "#ffe699"]
                         prop.onClick (fun e ->
                             
-                            Helperfuncs.updateAnnotation ((fun e -> e.ToggleOpen()), index, annoState, setState)                            
+                            Helperfuncs.updateAnnotation ((fun e -> e.ToggleOpen()), revIndex, annoState, setState)                            
                         )
                     ]
                 ] 
@@ -160,7 +160,7 @@ type Components =
                             Bulma.column [
                                 column.is1
                                 prop.className "hover:bg-[#ffd966] cursor-pointer"
-                                prop.onClick (fun e -> Helperfuncs.updateAnnotation ((fun a -> a.ToggleOpen()), index, annoState, setState))
+                                prop.onClick (fun e -> Helperfuncs.updateAnnotation ((fun a -> a.ToggleOpen()), revIndex, annoState, setState))
                                 prop.children [
                                     Html.span [
                                         Html.i [
@@ -173,17 +173,17 @@ type Components =
                                 prop.className "space-y-2"
                                 prop.children [
                                     Html.span [
-                                        prop.className "delete float-right mt-0 mb-2 z-50"
+                                        prop.className "delete float-right mt-0 mb-2 z-30"
                                         prop.onClick (fun _ -> 
-                                            let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[index] |> not)  
+                                            let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[revIndex] |> not)  
                                             // List.removeAt (List.filter (fun x -> x = a) state) state
                                             setState newAnnoList
                                         )
                                     ]
-                                    Searchblock.SearchElementKey (ui, setUi,annoState, setState, index)
-                                    if annoState[index].Search.KeyType.IsTermColumn() then
-                                        Searchblock.SearchElementBody(index, annoState, setState)
-                                        if annoState[index].Search.Body.isUnitized then
+                                    Searchblock.SearchElementKey (ui, setUi,annoState, setState, revIndex)
+                                    if annoState[revIndex].Search.KeyType.IsTermColumn() then
+                                        Searchblock.SearchElementBody(revIndex, annoState, setState)
+                                        if annoState[revIndex].Search.Body.isUnitized then
                                             Daisy.formControl [
                                                 Daisy.join [
                                                     Daisy.input [
@@ -193,7 +193,7 @@ type Components =
                                                             Helperfuncs.updateAnnotation((fun anno -> 
                                                                 let nextCell = {anno with Search.Body = anno.Search.Body.UpdateWithString(s)}
                                                                 nextCell
-                                                            ),index,annoState, setState)
+                                                            ),revIndex,annoState, setState)
                                                         )
                                                     ]
                                                 ]

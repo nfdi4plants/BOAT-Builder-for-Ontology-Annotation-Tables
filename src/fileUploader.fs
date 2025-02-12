@@ -109,18 +109,18 @@ type Components =
       ]
 
 
-    static member private FileUpload (ref: IRefValue<Browser.Types.HTMLInputElement option>) filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName modalState toggleState=
+    static member private FileUpload (ref: IRefValue<Browser.Types.HTMLInputElement option>) filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName=
       Html.div [
         Bulma.block [
           Html.div [
             prop.className "field has-addons"
             prop.children [
               // upload select
-              Html.p [
+              Html.div [
                 prop.className "control"
                 prop.children [
                   Html.span [
-                    prop.className "select"
+                    prop.className "select p-0 bg-transparent"
                     prop.children [
                       Html.select [
                         prop.onChange (fun (e: string) -> 
@@ -152,45 +152,40 @@ type Components =
                   Html.div [
                     prop.className "file"
                     prop.children [
-                      Html.label [
-                        prop.className "file-label"
-                        prop.children [
-                          Html.input [
-                            prop.className "file-input"
-                            prop.ref ref
-                            prop.type'.file
-                            prop.onChange (fun (f: Browser.Types.File) -> 
-                              FileReaderHelper.readFromFile f setFilehtml uploadFileType setLocalFile
-                              if ref.current.IsSome then
-                                ref.current.Value.value <- null
+                        Html.input [
+                          prop.className "file-input"
+                          prop.ref ref
+                          prop.type'.file
+                          prop.onChange (fun (f: Browser.Types.File) -> 
+                            FileReaderHelper.readFromFile f setFilehtml uploadFileType setLocalFile
+                            if ref.current.IsSome then
+                              ref.current.Value.value <- null
 
-                              f.name
-                              |> fun t ->
-                              t |> setFileName
-                              t |> setLocalFileName "fileName"
-                            )
-                          ]
-                          Html.span [
-                            prop.className "file-cta"
-                            prop.style [style.borderRadius(0, 6, 6, 0)]
-                            prop.children [
-                              Html.span [
-                                prop.className "file-icon"
-                                prop.children [
-                                  Html.i [
-                                    prop.className "fa-solid fa-upload"
-                                  ]
+                            f.name
+                            |> fun t ->
+                            t |> setFileName
+                            t |> setLocalFileName "fileName"
+                          )
+                        ]
+                        Html.span [
+                          prop.className "file-cta"
+                          prop.style [style.borderRadius(0, 6, 6, 0)]
+                          prop.children [
+                            Html.span [
+                              prop.className "file-icon"
+                              prop.children [
+                                Html.i [
+                                  prop.className "fa-solid fa-upload"
                                 ]
                               ]
-                              Html.span [
-                                prop.className "file-label"
-                                prop.text "Choose a file…"
-                              ]
+                            ]
+                            Html.span [
+                              prop.className "file-label"
+                              prop.text "Choose a file…"
                             ]
                           ]
-                          
                         ]
-                      ]
+                      
                     ]
                   ]
                 ]
@@ -222,7 +217,6 @@ type Components =
             ]
           ]
         ]
-
       ]
 
       
@@ -235,8 +229,6 @@ type Components =
     
         let uploadFileType, setUploadFileType = React.useState(UploadFileType.Docx)
 
-        let modalState, toggleState = React.useState(false)
-
         let setLocalFile (id: string)(nextFile: UploadedFile) =
             let JSONString = Json.stringify nextFile 
             Browser.WebStorage.localStorage.setItem(id, JSONString)
@@ -248,7 +240,7 @@ type Components =
               Html.div [
                   prop.className "container"
                   prop.children [
-                    Components.FileUpload ref filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName modalState toggleState 
+                    Components.FileUpload ref filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName
                   ]
               ]
           ]
