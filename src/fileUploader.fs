@@ -81,7 +81,7 @@ type FileUpload =
     /// https://stackoverflow.com/a/60539836/12858021
     static member DisplayPDF(pdfSource: string, modalContext: DropdownModal) =
       Html.div [
-        prop.className "content"
+        prop.className "prose lg:prose-lg"
         prop.onContextMenu (fun e ->
             let term = Browser.Dom.window.getSelection().ToString().Trim() 
             if term.Length <> 0 then 

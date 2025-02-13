@@ -134,7 +134,7 @@ module List =
 
 type Builder =
     [<ReactComponent>]
-    static member Main (annoState: Annotation list, setState: Annotation list -> unit, isLocalStorageClear: string -> unit -> bool, elementID) =
+    static member Main (annoState: Annotation list, setState: Annotation list -> unit, isLocalStorageClear: string -> unit -> bool, elementID, modalState, modalContext) =
 
         let initialFile (id: string) =
             if isLocalStorageClear id () = true then Unset
@@ -169,9 +169,14 @@ type Builder =
             {new IDisposable with member this.Dispose() = window.removeEventListener ("resize", turnOffContext) }    
         )
 
+        // React.useEffect((fun _ ->
+        //   // if modalContext.modalState.isActive then 
+        //   //   document.body.setAttribute("style", "overflow-y: hidden; scrollbar-gutter: stable")
+        //   // else 
+        //   //   document.body.setAttribute("style", "overflow: auto; overflow-x:hidden;")
+        // ), [|box modalContext.modalState.isActive|])
+
         Html.div [
-            if modalContext.modalState.isActive then document.body.setAttribute("style", "overflow-y: hidden; scrollbar-gutter: stable")
-            else document.body.setAttribute("style", "overflow: auto; overflow-x:hidden;")
             prop.className "flex flex-row py-5 px-5"
             prop.id "main-parent"
             prop.onClick (fun e -> modalContext.setter initialModal)
@@ -228,6 +233,7 @@ type Builder =
                         | Docx filehtml ->
                           Html.div [
                             prop.onContextMenu (fun e ->
+                                // https://stackoverflow.com/a/2614472/12858021
                                 let term = window.getSelection().ToString().Trim() 
                                 if term.Length <> 0 then 
                                     modalContext.setter {
@@ -240,13 +246,16 @@ type Builder =
                                     ()
                             )
                             prop.className [
-                              "overflow-x-hidden h-[50rem] flex flex-row gap-2 w-full"
-                              if modalContext.modalState.isActive = true then
-                                "overflow-y-hidden"
-                              else
-                                "overflow-y-auto"
+                              "overflow-x-hidden h-[50rem] flex flex-row gap-2 w-full relative"
+                              // if modalContext.modalState.isActive = true then
+                              //   "overflow-y-hidden"
+                              // else
+                              //   "overflow-y-auto"
                             ] 
                             prop.children [
+                              match modalState.isActive with
+                              |true -> Contextmenu.onContextMenu (modalContext, annoState, setState, elementID)
+                              |false -> Html.none
                               Html.div [
                                 prop.className "w-2/3"
                                 prop.children [
