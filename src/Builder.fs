@@ -1,7 +1,6 @@
 namespace Components
 
 open Feliz
-open Feliz.Bulma
 open Browser.Dom
 open Browser.Types
 open Types
@@ -170,59 +169,64 @@ type Builder =
             {new IDisposable with member this.Dispose() = window.removeEventListener ("resize", turnOffContext) }    
         )
 
-        Bulma.columns [
+        Html.div [
             if modalContext.modalState.isActive then document.body.setAttribute("style", "overflow-y: hidden; scrollbar-gutter: stable")
             else document.body.setAttribute("style", "overflow: auto; overflow-x:hidden;")
-            prop.className "z-0 py-5 px-5 text-white "
+            prop.className "flex flex-row py-5 px-5"
             prop.id "main-parent"
             prop.onClick (fun e -> modalContext.setter initialModal)
             prop.children [
-                Bulma.column [
-                    column.isOneFifth
+                Html.div [
+                    prop.className "w-1/5 p-2"
                     prop.children [
-                        Bulma.block [
+                        Html.h1 [
                             prop.text "Navigation"
                         ]
-                        Bulma.block [
-                            Components.UploadDisplay(filehtml,setFilehtml, setState, setFileName, setLocalFileName)
+                        Html.div [
+                            FileUpload.UploadDisplay(filehtml,setFilehtml, setState, setFileName, setLocalFileName)
                         ]
                     ]
                 ]
-                Bulma.column [
-                    Bulma.columns [
-                      Bulma.column [
-                        column.isThreeFifths
-                        prop.className "relative"
-                        prop.children [
-                            Bulma.block [
-                                prop.text fileName
-                            ]
+                Html.div [
+                    prop.className "w-4/5 p-2"
+                    // TODO: NOT SURE WHAT THIS WAS
+                    // Html.div [
+                    //   Html.div [
+                    //     // column.isThreeFifths
+                    //     prop.className "relative"
+                    //     prop.children [
+                    //         Html.div [
+                    //             prop.text fileName
+                    //         ]
                             
-                            // | PDF pdfSource ->
-                            //        Components.DisplayPDF(pdfSource, modalContext)
-                        ]
-                      ]
-                      Bulma.column [
-                          prop.className "relative"
-                          prop.children [
-                              if filehtml = Unset then
-                                  Html.none
-                              else
-                                  Bulma.block [
-                                      prop.text "Annotations"
-                                  ]
-                                  // prop.className "overflow-x-hidden overflow-y-auto h-[50rem]"
-                          ]
-                      ]
-                    ]
-                      
-                    match filehtml with
-                      | Unset -> Html.p [prop.text "Upload a file!"; prop.className "text-[#4fb3d9]"]
-                      | Docx filehtml ->
-                    Html.div [
-                      prop.className "relative"
-                      prop.children [
-                        Bulma.block [
+                    //         // | PDF pdfSource ->
+                    //         //        Components.DisplayPDF(pdfSource, modalContext)
+                    //     ]
+                    //   ]
+                    //   Html.div [
+                    //       prop.className "relative"
+                    //       prop.children [
+                    //           if filehtml = Unset then
+                    //               Html.none
+                    //           else
+                    //               Html.div [
+                    //                   prop.text "Annotations"
+                    //               ]
+                    //               // prop.className "overflow-x-hidden overflow-y-auto h-[50rem]"
+                    //       ]
+                    //   ]
+                    // ]
+                    prop.children [
+                      match filehtml with
+                        | Unset ->
+                          Html.div [
+                            prop.className "container mx-auto flex items-center justify-center"
+                            prop.children [
+                              Html.p [prop.text "Upload a file!"; prop.className "text-[#4fb3d9]"]
+                            ]
+                          ] 
+                        | Docx filehtml ->
+                          Html.div [
                             prop.onContextMenu (fun e ->
                                 let term = window.getSelection().ToString().Trim() 
                                 if term.Length <> 0 then 
@@ -235,29 +239,31 @@ type Builder =
                                 else 
                                     ()
                             )
-                            if modalContext.modalState.isActive = true then prop.className "overflow-x-hidden overflow-y-hidden h-[50rem]"
-                            else prop.className "overflow-x-hidden overflow-y-auto h-[50rem]"
+                            prop.className [
+                              "overflow-x-hidden h-[50rem] flex flex-row gap-2 w-full"
+                              if modalContext.modalState.isActive = true then
+                                "overflow-y-hidden"
+                              else
+                                "overflow-y-auto"
+                            ] 
                             prop.children [
-                                Bulma.columns [
-                                    Bulma.column [
-                                        column.isThreeFifths
-                                        prop.children [
-                                            Components.DisplayHtml(filehtml, annoState, elementID)
-                                        ]
-                                    ]
-                                    Bulma.column [
-                                        prop.className "relative"
-                                        prop.children [
-                                            for a in 0 .. annoState.Length - 1 do
-                                                App.Components.AnnoBlockwithSwate(annoState, setState, a)    
-                                        ]
-                                    ]
+                              Html.div [
+                                prop.className "w-2/3"
+                                prop.children [
+                                  FileUpload.DisplayHtml(filehtml, annoState, elementID)
                                 ]
+                              ]
+                              Html.div [
+                                prop.className "relative w-1/3"
+                                prop.children [
+                                    for a in 0 .. annoState.Length - 1 do
+                                        App.Components.AnnoBlockwithSwate(annoState, setState, a)    
+                                ]
+                              ]
                             ]
-                        ]
-                      ]
-                    ]
+                          ]
                 ]
+              ]
             ]
         ]
         

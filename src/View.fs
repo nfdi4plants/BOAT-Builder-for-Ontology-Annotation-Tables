@@ -55,14 +55,13 @@ type View =
         
         let currentpage,setpage = React.useState(Types.Page.Builder) 
 
-        printfn "%A" currentpage
         React.strictMode [
             React.contextProvider(Contexts.ModalContext.createModalContext, myModalContext, React.fragment [ //makes the context accesable for the whole project
                 Html.div [
                     prop.id "mainView"
-                    prop.className "flex h-full flex-col"
+                    prop.className "flex min-h-screen flex-col"
                     prop.children [
-                        Components.NavBar.Main(setpage,currentpage, AnnotationState, setState)
+                        Components.Navbar.Main(setpage,currentpage, AnnotationState, setState)
                         Html.div [
                             prop.id "contentView"
                             prop.className "grow"

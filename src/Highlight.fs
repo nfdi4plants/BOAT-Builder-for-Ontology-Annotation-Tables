@@ -3,8 +3,7 @@ namespace Components
 open Feliz
 open Fable.Core
 open Fable.Core.JsInterop
-open Feliz.Bulma
-
+open Feliz.DaisyUI
 
 [<EmitConstructor; Global>]
 type Range() =
@@ -96,26 +95,25 @@ type PaperWithMarker =
         )
     )
     Html.div [
-      Bulma.modal [
-        if APIwarningModalState = true && hasClosed = false then Bulma.modal.isActive
-        else ()
+      Daisy.modal.dialog [
+        prop.className [
+          if APIwarningModalState && not hasClosed then 
+            "modal-open"
+        ]
         prop.children [
-          Bulma.modalBackground []
-          Bulma.modalContent [
-            Bulma.box [
-              Bulma.block [
-                Html.p "Text highlighting is not compatible with your browser."
-                Html.a [
-                    prop.text "View compatible browsers."
-                    prop.href "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility"
-                    prop.target.blank 
-                    prop.className "underline text-blue-400"
-                ]
+          Daisy.modalBox.div [
+            Html.div [
+              Html.p "Text highlighting is not compatible with your browser."
+              Html.a [
+                  prop.text "View compatible browsers."
+                  prop.href "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility"
+                  prop.target.blank 
+                  prop.className "underline text-blue-400"
               ]
-              Bulma.button.button [
-                prop.text "Got it"
-                prop.onClick (fun _ -> setHasClosed(true))
-              ]
+            ]
+            Daisy.button.button [
+              prop.text "Got it"
+              prop.onClick (fun _ -> setHasClosed true)
             ]
           ]
         ]

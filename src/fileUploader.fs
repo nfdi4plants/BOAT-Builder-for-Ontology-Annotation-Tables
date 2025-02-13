@@ -3,7 +3,6 @@ namespace Components
 open Feliz
 open Types
 open Fable.SimpleJson
-open Feliz.Bulma
 open System.Text.RegularExpressions
 open ARCtrl
 
@@ -66,7 +65,7 @@ module Highlight =
       // ) keyHighlighttext values
 
 
-type Components =
+type FileUpload =
     static member DisplayHtml(htmlString: string, annoList: Annotation list, elementID: string) = 
       // Html.div [    
       //       // prop.innerHtml (Highlight.highlightAnnos (htmlString, Highlight.keyList (annoList)))
@@ -108,118 +107,61 @@ type Components =
         ]
       ]
 
-
-    static member private FileUpload (ref: IRefValue<Browser.Types.HTMLInputElement option>) filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName=
-      Html.div [
-        Bulma.block [
-          Html.div [
-            prop.className "field has-addons"
-            prop.children [
-              // upload select
-              Html.div [
-                prop.className "control"
-                prop.children [
-                  Html.span [
-                    prop.className "select p-0 bg-transparent"
-                    prop.children [
-                      Html.select [
-                        prop.onChange (fun (e: string) -> 
-                          match e with
-                          | "Docx" -> setUploadFileType(UploadFileType.Docx)
-                          // | "PDF" -> setUploadFileType(UploadFileType.PDF)
-                          | _ -> ()
-                        )
-                        prop.children [
-                          Html.option [
-                            prop.value "Docx"
-                            prop.text "Docx"
-                          ]
-                          // Html.option [
-                          //   prop.value "PDF"
-                          //   prop.text "PDF"
-                          // ]
-                        ]
-                      ]
-                    ]
-                  ]
-                ]
-              ]
-              
-              // file upload input
-              Html.div [
-                prop.className "control"
-                prop.children [
-                  Html.div [
-                    prop.className "file"
-                    prop.children [
-                        Html.input [
-                          prop.className "file-input"
-                          prop.ref ref
-                          prop.type'.file
-                          prop.onChange (fun (f: Browser.Types.File) -> 
-                            FileReaderHelper.readFromFile f setFilehtml uploadFileType setLocalFile
-                            if ref.current.IsSome then
-                              ref.current.Value.value <- null
-
-                            f.name
-                            |> fun t ->
-                            t |> setFileName
-                            t |> setLocalFileName "fileName"
-                          )
-                        ]
-                        Html.span [
-                          prop.className "file-cta"
-                          prop.style [style.borderRadius(0, 6, 6, 0)]
-                          prop.children [
-                            Html.span [
-                              prop.className "file-icon"
-                              prop.children [
-                                Html.i [
-                                  prop.className "fa-solid fa-upload"
-                                ]
-                              ]
-                            ]
-                            Html.span [
-                              prop.className "file-label"
-                              prop.text "Choose a file…"
-                            ]
-                          ]
-                        ]
-                      
-                    ]
-                  ]
-                ]
-              ]
-            ]
+    static member private FileTypeSelect (setUploadFileType) =
+      Html.select [
+        prop.className "select join-item w-min"
+        prop.onChange (fun (e: string) -> 
+          match e with
+          | "Docx" -> setUploadFileType(UploadFileType.Docx)
+          // | "PDF" -> setUploadFileType(UploadFileType.PDF)
+          | _ -> ()
+        )
+        prop.children [
+          Html.option [
+            prop.value "Docx"
+            prop.text "Docx"
           ]
+          // Html.option [
+          //   prop.value "PDF"
+          //   prop.text "PDF"
+          // ]
         ]
-        Html.button [
-          if filehtml = Unset then prop.hidden (true)
-          prop.className "pl-1"
-          prop.children [
-            Html.span [
-              Html.i [
-                prop.className "fa-solid fa-trash-can"
-                prop.onClick (fun e -> 
-                  Unset
-                  |> fun t ->
-                  t |> setFilehtml
-                  t |> setLocalFile "file"
+      ]
 
-                  [] |> setState
+    static member private FileInput (ref: IRefValue<Browser.Types.HTMLInputElement option>) filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName=
+      Html.input [
+        prop.className "file-input join-item"
+        prop.ref ref
+        prop.type'.file
+        prop.onChange (fun (f: Browser.Types.File) -> 
+          FileReaderHelper.readFromFile f setFilehtml uploadFileType setLocalFile
+          if ref.current.IsSome then
+            ref.current.Value.value <- null
+          setFileName f.name
+          setLocalFileName "fileName" f.name
+        )
+      ]
 
-                  ""   
-                  |> fun t ->
-                  t |> setFileName
-                  t |> setLocalFileName "fileName"                     
-                )
-              ]
+    static member private RemoveUploadedFileButton (setFilehtml, setLocalFile, setState, setFileName, setLocalFileName) =
+      Html.button [
+        prop.className "btn btn-error btn-block"
+        prop.onClick (fun e -> 
+          setFilehtml Unset
+          setLocalFile "file" Unset
+
+          [] |> setState
+
+          setFileName ""
+          setLocalFileName "fileName" ""
+        )
+        prop.children [
+          Html.span [
+            Html.i [
+              prop.className "fa-solid fa-trash-can"
             ]
           ]
         ]
       ]
-
-      
 
     /// <summary>
     /// A stateful React component that maintains a counter
@@ -229,19 +171,27 @@ type Components =
     
         let uploadFileType, setUploadFileType = React.useState(UploadFileType.Docx)
 
-        let setLocalFile (id: string)(nextFile: UploadedFile) =
+        let setLocalFile (id: string) (nextFile: UploadedFile) =
             let JSONString = Json.stringify nextFile 
             Browser.WebStorage.localStorage.setItem(id, JSONString)
 
         let ref = React.useInputRef()
         Html.div [
-          prop.className "section p-0 space-y-4" 
+          prop.className "flex flex-col gap-2"
           prop.children [
-              Html.div [
-                  prop.className "container"
-                  prop.children [
-                    Components.FileUpload ref filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName
-                  ]
+            Html.div [
+              prop.className "join"
+              prop.children [
+                FileUpload.FileTypeSelect setUploadFileType
+                FileUpload.FileInput ref filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName
               ]
+            ]
+            match filehtml with
+            | Unset -> Html.div []
+            | _ ->
+              FileUpload.RemoveUploadedFileButton(
+                setFilehtml, setLocalFile, setState, setFileName, setLocalFileName
+              )
           ]
         ]
+
