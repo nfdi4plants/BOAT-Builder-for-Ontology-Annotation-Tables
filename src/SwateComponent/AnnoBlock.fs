@@ -54,7 +54,7 @@ module Searchblock =
             prop.className "relative"
             prop.children [
                 Daisy.join [
-                    prop.className "w-full z-30"
+                    prop.className "w-full z-30 text-white"
                     prop.children [
                         // Choose building block type dropdown element
                         // Dropdown building block type choice
@@ -91,7 +91,7 @@ module Searchblock =
             prop.className "relative"
             prop.children [
                 Daisy.join [
-                    prop.className "w-full z-30"
+                    prop.className "w-full z-30 text-white"
                     prop.children [
                         TermOrUnitizedSwitch (a, annoState, setAnnoState)
                         // helper for setting the body cell type
@@ -188,6 +188,7 @@ type Components =
                                                   Daisy.join [
                                                       Daisy.input [
                                                           prop.autoFocus true
+                                                          prop.className "text-white"
                                                           prop.placeholder "Value..."
                                                           prop.onChange (fun (s:string) ->
                                                               Helperfuncs.updateAnnotation((fun anno -> 
