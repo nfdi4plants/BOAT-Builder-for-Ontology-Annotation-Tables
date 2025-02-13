@@ -8,7 +8,6 @@ open Shared.Database
 open Shared.DTOs.TermQuery
 open Shared.DTOs.ParentTermQuery
 open Fable.Core.JsInterop
-open Feliz.Bulma
 open Fable.Remoting.Client
 open Feliz.DaisyUI
 
@@ -184,7 +183,7 @@ module TermSearchAux =
                             ]
                         ]
                     ]
-                    Components.CollapseButton(show, setShow, classes="btn-sm btn-ghost")
+                    FileUpload.CollapseButton(show, setShow, classes="btn-sm btn-ghost")
                 ]
             ]
 

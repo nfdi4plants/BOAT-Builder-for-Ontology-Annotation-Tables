@@ -11,7 +11,7 @@
     <Compile Include="Contextmenu.fs" />
     <Compile Include="Mammoth.fs" />
     <Compile Include="Highlight.fs" />
-    <Compile Include="fileUploader.fs" />
+    <Compile Include="FileUploader.fs" />
     <Compile Include="SwateComponent\SWATEShared\Database.fs" />
     <Compile Include="SwateComponent\SWATEShared\DTOS\ParentTermQueryDto.fs" />
     <Compile Include="SwateComponent\SWATEShared\DTOS\TermQueryDto.fs" />
@@ -39,7 +39,6 @@
   <ItemGroup>
     <PackageReference Include="Fable.Remoting.Client" Version="7.32.0" />
     <PackageReference Include="Feliz" Version="2.8.0" />
-    <PackageReference Include="Feliz.Bulma" Version="3.0.0" />
     <PackageReference Include="Fable.Promise" Version="3.2.0" />
     <PackageReference Include="Feliz.DaisyUI" Version="4.2.1" />
     <PackageReference Include="Feliz.Router" Version="4.0.0" />

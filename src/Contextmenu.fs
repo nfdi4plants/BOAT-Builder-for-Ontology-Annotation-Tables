@@ -1,7 +1,6 @@
 namespace Components
 
 open Feliz
-open Feliz.Bulma
 open Types
 open Browser
 open Browser.Types

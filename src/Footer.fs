@@ -1,17 +1,16 @@
 namespace Components
 
 open Feliz
-open Feliz.Bulma
+open Feliz.DaisyUI
 
 type Footer =
     static member Main =
-        Bulma.footer [
-            prop.className "content has-text-centered h-16 select-none"
+        Daisy.footer [
+            prop.className "text-base-content footer-center bg-base-300 p-4 select-none"
             prop.children [
-                Html.div [
-                    prop.className "inline-flex"
+                Html.aside [
                     prop.children [
-                        Html.p [
+                        Html.span [
                             prop.text "This is a footer. By"
                             prop.className "pr-1" 
                         ]

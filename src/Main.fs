@@ -10,9 +10,7 @@ open Fable.React
 // let inline foo (props : IFooProps list) elems =
 //     Fable.Helpers.React.from Foo (keyValueList CaseRules.LowerFirst props) elems
 
-importSideEffects "./tailwind.scss"
-importSideEffects "./styling.scss"
-
+importSideEffects "./tailwind.css"
 
 let root = ReactDOM.createRoot(document.getElementById "feliz-app")
 root.render(App.View.Main())
