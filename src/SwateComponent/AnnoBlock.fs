@@ -170,15 +170,21 @@ type Components =
                                   ]
                               ]
                               Html.div [
-                                  prop.className "space-y-2"
+                                  prop.className "space-y-2 flex flex-col gap-2"
                                   prop.children [
-                                      Html.span [
-                                          prop.className "delete float-right mt-0 mb-2 z-30"
-                                          prop.onClick (fun _ -> 
-                                              let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[revIndex] |> not)  
-                                              // List.removeAt (List.filter (fun x -> x = a) state) state
-                                              setState newAnnoList
-                                          )
+                                      Html.div [
+                                        prop.className "flex flex-row justify-end"
+                                        prop.children [
+                                          Html.span [
+                                              prop.className "mt-0 cursor-pointer hover:text-error transition-colors"
+                                              prop.onClick (fun _ -> 
+                                                  let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[revIndex] |> not)  
+                                                  // List.removeAt (List.filter (fun x -> x = a) state) state
+                                                  setState newAnnoList
+                                              )
+                                              prop.text "✕"
+                                          ]
+                                        ]
                                       ]
                                       Searchblock.SearchElementKey (ui, setUi,annoState, setState, revIndex)
                                       if annoState[revIndex].Search.KeyType.IsTermColumn() then
