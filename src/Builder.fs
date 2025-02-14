@@ -140,7 +140,7 @@ type Builder =
             if isLocalStorageClear id () = true then Unset
             else Json.parseAs<UploadedFile> (Browser.WebStorage.localStorage.getItem id)  
 
-        let filehtml, setFilehtml = React.useState(initialFile "file")
+        let (filehtml: UploadedFile), setFilehtml = React.useState(initialFile "file")
 
         let setLocalFileName (id: string)(nextNAme: string) =
             let JSONstring= 
@@ -185,6 +185,7 @@ type Builder =
                     prop.className "w-1/5 p-2"
                     prop.children [
                         Html.h1 [
+                            prop.className "mb-2"
                             prop.text "Navigation"
                         ]
                         Html.div [
@@ -194,56 +195,37 @@ type Builder =
                 ]
                 Html.div [
                     prop.className "w-4/5 p-2"
-                    // TODO: NOT SURE WHAT THIS WAS
-                    // Html.div [
-                    //   Html.div [
-                    //     // column.isThreeFifths
-                    //     prop.className "relative"
-                    //     prop.children [
-                    //         Html.div [
-                    //             prop.text fileName
-                    //         ]
-                            
-                    //         // | PDF pdfSource ->
-                    //         //        Components.DisplayPDF(pdfSource, modalContext)
-                    //     ]
-                    //   ]
-                    //   Html.div [
-                    //       prop.className "relative"
-                    //       prop.children [
-                    //           if filehtml = Unset then
-                    //               Html.none
-                    //           else
-                    //               Html.div [
-                    //                   prop.text "Annotations"
-                    //               ]
-                    //               // prop.className "overflow-x-hidden overflow-y-auto h-[50rem]"
-                    //       ]
-                    //   ]
-                    // ]
                     prop.children [
                       match filehtml with
                         | Unset ->
                           Html.div [
-                            prop.className "container mx-auto flex items-center justify-center"
+                            prop.className "container mx-auto flex"
                             prop.children [
                               Html.p [prop.text "Upload a file!"; prop.className "text-[#4fb3d9]"]
                             ]
                           ] 
-                        | Docx filehtml ->
+                        | Docx fileString ->
                           Html.div [
+                            prop.id "paper"
                             prop.onContextMenu (fun e ->
                                 // https://stackoverflow.com/a/2614472/12858021
-                                let term = window.getSelection().ToString().Trim() 
+                                let Selection = window.getSelection()
+                                let term = Selection.ToString().Trim()
+                                let parent = document.getElementById("paper")
+                                let bounds = parent.getBoundingClientRect()
+                                let rect = Selection.getRangeAt(0).getBoundingClientRect()
+                                let relativeParent = document.getElementById(elementID).getBoundingClientRect()
                                 if term.Length <> 0 then 
                                     modalContext.setter {
                                         isActive = true;
-                                        location = int e.pageX, int e.pageY
+                                        location =e.clientX - bounds.left, rect.bottom - relativeParent.top + window.scrollY
                                     }
                                     e.stopPropagation() 
                                     e.preventDefault()
                                 else 
                                     ()
+                                log "parent"    
+                                log bounds
                             )
                             prop.className [
                               "overflow-x-hidden h-[50rem] flex flex-row gap-2 w-full relative"
@@ -259,14 +241,26 @@ type Builder =
                               Html.div [
                                 prop.className "w-2/3"
                                 prop.children [
-                                  FileUpload.DisplayHtml(filehtml, annoState, elementID)
+                                  Html.div [
+                                      prop.text fileName
+                                      prop.className "mb-2"
+                                  ]
+                                  FileUpload.DisplayHtml(fileString, annoState, elementID)
                                 ]
+                                
                               ]
                               Html.div [
                                 prop.className "relative w-1/3"
                                 prop.children [
-                                    for a in 0 .. annoState.Length - 1 do
-                                        App.Components.AnnoBlockwithSwate(annoState, setState, a)    
+                                  if filehtml = Unset then
+                                      Html.none
+                                  else
+                                      Html.div [
+                                          prop.text "Annotations"
+                                          prop.className "mb-2"
+                                      ]
+                                  for a in 0 .. annoState.Length - 1 do
+                                      App.Components.AnnoBlockwithSwate(annoState, setState, a)    
                                 ]
                               ]
                             ]

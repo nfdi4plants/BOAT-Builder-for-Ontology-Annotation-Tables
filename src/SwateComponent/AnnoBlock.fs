@@ -69,15 +69,6 @@ module Searchblock =
                             //selectHeader ui setUi h |> dispatch
                         let input = annoState[a].Search.Key
                         Components.TermSearch.Input(setter, fullwidth=true, input=input, isjoin=true, ?portalTermSelectArea=element.current, classes="")
-                        // elif model.HeaderCellType.HasIOType() then
-                        //     Daisy.input [
-                        //         prop.readOnly true
-                        //         prop.valueOrDefault (
-                        //             model.TryHeaderIO()
-                        //             |> Option.get
-                        //             |> _.ToString()
-                        //         )
-                        //     ]
                     ]
                 ]
             ]

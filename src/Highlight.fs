@@ -104,14 +104,15 @@ type PaperWithMarker =
           Daisy.modalBox.div [
             Html.div [
               Html.p "Text highlighting is not compatible with your browser."
-              Html.a [
-                  prop.text "View compatible browsers."
+              Html.span [
+                  prop.text "View compatible browsers"
                   prop.href "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility"
                   prop.target.blank 
                   prop.className "underline text-blue-400"
               ]
             ]
             Daisy.button.button [
+              prop.className "mt-5"
               prop.text "Got it"
               prop.onClick (fun _ -> setHasClosed true)
             ]

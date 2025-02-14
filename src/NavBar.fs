@@ -12,21 +12,30 @@ type Navbar =
             if isActive then "modal-open"
           ]
           prop.children [
-              Daisy.modalBox.div [
-                  Html.form [
-                    prop.method "dialog"
-                    prop.children [
-                      Daisy.button.button [
-                        prop.className "btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-                        prop.text "✕"
-                        prop.onClick (fun _ -> toggleActive(false))
-                      ]
+            Daisy.modalBox.div [
+              prop.className "p-0"
+              prop.children [
+                Html.form [
+                  prop.method "dialog"
+                  prop.children [
+                    Daisy.button.button [
+                      prop.className "btn btn-sm btn-circle absolute right-2 top-2 z-50 h-5 w-5"
+                      prop.text "✕"
+                      prop.onClick (fun _ -> toggleActive(false))
                     ]
                   ]
-                  PreviewTable.table(annoState, setAnnoState)
+                ]
+                Html.div [
+                  prop.className "p-inherit"
+                  prop.children [
+                    PreviewTable.table(annoState, setAnnoState, toggleActive)
+                  ]
+                ]
               ]
+            ]
           ]
-      ]
+        ]
+      
 
     static member NavbarButton(text: string, onClick: unit -> unit, ?disabled) = 
       let disabled = defaultArg disabled false
@@ -41,14 +50,11 @@ type Navbar =
 
     static member Main(setPage: Types.Page -> unit, statePage: Types.Page, annoState, setAnnoState) =
         let modalState, toggleState = React.useState(false)
-
         let logo = StaticFile.import "./img/DataPLANT_logo_bg_transparent.svg"
         Daisy.navbar [
-            prop.className "bg-base-300 shadow-lg"
+            prop.className "bg-base-300 shadow-lg p-0"
             prop.children [
-
                 Navbar.AnnotationModal(modalState, toggleState, annoState, setAnnoState)
-
                 Daisy.navbarStart [
                   prop.className "gap-2 items-center"
                   prop.children [ 
@@ -87,7 +93,6 @@ type Navbar =
                 ]
 
                 Daisy.navbarEnd [
-
                   prop.className "gap-2"
                   prop.children [
                     Daisy.button.a [ 
@@ -103,14 +108,15 @@ type Navbar =
                         //     Html.i [prop.className "fa-brands fa-github"; prop.style [style.fontSize (length.rem 3)]]
                         // ]
                     ]
-                    Daisy.button.a [
+                    Html.a [
                       prop.href "https://github.com/nfdi4plants/BOAT-Builder-for-Ontology-ARC-Templates"
                       prop.target.blank 
-                      prop.className "btn-square"
                       prop.children [
                           Html.img [ 
                               prop.src "./img/github-mark-white.png"
-                              prop.className "p-2"
+                              prop.className "p-1"
+                              prop.height 40
+                              prop.width 40
                           ]
                       ]
                     ]

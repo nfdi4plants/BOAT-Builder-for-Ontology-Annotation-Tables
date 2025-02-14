@@ -7,24 +7,24 @@ open Types
 
 module PreviewTable =
 
-    let table (annoState: Annotation list, setState: Annotation list -> unit) =
+    let table (annoState: Annotation list, setState: Annotation list -> unit, toggleActive) =
         Html.div [
-            prop.className "w-96 bg-white"
+            prop.className "table border border-black"
             prop.children [
                 Daisy.table [
-                    prop.className "bg-white"
+                    prop.className "border-b border-black bg-white"
                     prop.children [
                         if annoState = [] then
                             Html.head []
                         else
                             Html.thead [
                                 Html.tr [
-                                    Html.th [prop.text "No.";prop.style [style.color.black]]
-                                    Html.th [prop.text "Key";prop.style [style.color.black]]
-                                    Html.th [prop.text "KeyType";prop.style [style.color.black]]
-                                    Html.th [prop.text "Term";prop.style [style.color.black]]
-                                    Html.th [prop.text "Value (if unitized)";prop.style [style.color.black]]
-                                    Html.th [prop.text "";prop.style [style.color.black]]
+                                    Html.th [prop.text "No."; prop.className "border border-black text-black"]
+                                    Html.th [prop.text "Key";prop.className "border border-black text-black"]
+                                    Html.th [prop.text "KeyType";prop.className "border border-black text-black"]
+                                    Html.th [prop.text "Term";prop.className "border border-black text-black"]
+                                    Html.th [prop.text "Value (if unitized)";prop.className "border border-black text-black"]
+                                    Html.th [prop.text "";prop.className "border border-black text-black"]
                                 ]
                             ]
                         Html.tbody [
@@ -42,27 +42,31 @@ module PreviewTable =
                             else
                                 Html.tr [
                                     prop.children [
-                                        Html.td [prop.text(a + 1); prop.style [style.color.black]]
-                                        Html.td [prop.text (annoState[a].Search.Key.NameText); prop.style [style.color.black]]
-                                        Html.td [prop.text (annoState[a].Search.KeyType.ToString()); prop.style [style.color.black]]
+                                        Html.td [prop.text(a + 1); prop.className "border border-black text-black"]
+                                        Html.td [prop.text (annoState[a].Search.Key.NameText);prop.className "border border-black text-black"]
+                                        Html.td [prop.text (annoState[a].Search.KeyType.ToString()); prop.className "border border-black text-black"]
                                         match annoState[a].Search.Body with
                                         | (CompositeCell.Term oa) -> 
-                                            Html.td [prop.text(oa.NameText); prop.style [style.color.black]]
-                                            Html.td ""
+                                            Html.td [prop.text(oa.NameText); prop.className "border border-black text-black"]
+                                            Html.td [prop.text ""; prop.className "border border-black text-black"]
                                         | (CompositeCell.Unitized (v,oa)) ->
-                                            Html.td [prop.text(oa.NameText); prop.style [style.color.black]]
-                                            Html.td [prop.text v; prop.style [style.color.black]]
+                                            Html.td [prop.text(oa.NameText); prop.className "border border-black text-black"]
+                                            Html.td [prop.text v; prop.className "border border-black text-black"]
                                         |_ -> ()
                                         Html.td [
-                                            Html.button [
-                                                prop.className "text-black"
-                                                prop.onClick (fun _ -> 
-                                                    let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[a] |> not)  
-                                                    setState newAnnoList
-                                                )
-                                                prop.children [
-                                                    Html.i [
-                                                        prop.className "fa-regular fa-trash-can"
+                                            prop.className "border border-black text-black"
+                                            prop.children [
+                                                Html.button [
+                                                    prop.className "text-black cursor-pointer hover:text-error"
+                                                    prop.onClick (fun _ -> 
+                                                        let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[a] |> not)  
+                                                        setState newAnnoList
+                                                        if newAnnoList = [] then toggleActive false
+                                                    )
+                                                    prop.children [
+                                                        Html.i [
+                                                            prop.className "fa-regular fa-trash-can cursor-pointer hover:text-error"
+                                                        ]
                                                     ]
                                                 ]
                                             ]

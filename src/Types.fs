@@ -98,7 +98,7 @@ type Annotation =
 
 type ModalInfo = {
     isActive: bool
-    location: int * int
+    location: float * float
 }
 
 type DropdownModal = {
