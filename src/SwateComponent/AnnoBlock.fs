@@ -133,13 +133,16 @@ type Components =
             prop.children [
             if annoState[revIndex].IsOpen = false then 
                 Html.button [
-                    Html.i [
-                        prop.className "fa-solid fa-comment-dots"
-                        prop.style [style.color "#ffe699"]
-                        prop.onClick (fun e ->
-                            
-                            Helperfuncs.updateAnnotation ((fun e -> e.ToggleOpen()), revIndex, annoState, setState)                            
-                        )
+                    prop.className "cursor-pointer"
+                    prop.children [
+                        Html.i [
+                            prop.className "fa-solid fa-comment-dots"
+                            prop.style [style.color "#ffe699"]
+                            prop.onClick (fun e ->
+                                
+                                Helperfuncs.updateAnnotation ((fun e -> e.ToggleOpen()), revIndex, annoState, setState)                            
+                            )
+                        ]
                     ]
                 ] 
             else
@@ -150,7 +153,7 @@ type Components =
                             prop.className "flex flex-row"
                             prop.children [
                               Html.div [
-                                  prop.className "hover:bg-[#ffd966] cursor-pointer"
+                                  prop.className "cursor-pointer hover:text-info" 
                                   prop.onClick (fun e -> Helperfuncs.updateAnnotation ((fun a -> a.ToggleOpen()), revIndex, annoState, setState))
                                   prop.children [
                                       Html.span [
@@ -173,7 +176,13 @@ type Components =
                                                   // List.removeAt (List.filter (fun x -> x = a) state) state
                                                   setState newAnnoList
                                               )
-                                              prop.text "✕"
+                                              prop.children [
+                                                    Html.span [
+                                                        Html.i [
+                                                            prop.className "fa-solid fa-trash-can"
+                                                        ]
+                                                    ]
+                                              ]
                                           ]
                                         ]
                                       ]
@@ -181,26 +190,46 @@ type Components =
                                       if annoState[revIndex].Search.KeyType.IsTermColumn() then
                                           Searchblock.SearchElementBody(revIndex, annoState, setState)
                                           if annoState[revIndex].Search.Body.isUnitized then
-                                              Daisy.formControl [
-                                                  Daisy.join [
-                                                      Daisy.input [
-                                                          prop.autoFocus true
-                                                          prop.className "text-white"
-                                                          prop.placeholder "Value..."
-                                                          prop.onChange (fun (s:string) ->
-                                                              Helperfuncs.updateAnnotation((fun anno -> 
-                                                                  let nextCell = {anno with Search.Body = anno.Search.Body.UpdateWithString(s)}
-                                                                  nextCell
-                                                              ),revIndex,annoState, setState)
-                                                          )
-                                                      ]
-                                                  ]
-                                              ]
-                                  ]
-                              ]
+                                                // Daisy.formControl [
+                                                //     prop.autoFocus true
+                                                //     prop.className "text-white w-full"
+                                                //     prop.placeholder "Value..."
+                                                //     prop.onChange (fun (s:string) ->
+                                                //         Helperfuncs.updateAnnotation((fun anno -> 
+                                                //             let nextCell = {anno with Search.Body = anno.Search.Body.UpdateWithString(s)}
+                                                //             nextCell
+                                                //         ),revIndex,annoState, setState)
+                                                //     )
+                                                // ]
+                                                Daisy.formControl [
+                                                    prop.className "max-w-full"
+                                                    prop.children [
+                                                        Html.div [
+                                                            prop.className [
+                                                                "input input-bordered flex items-center gap-2 relative"
+                                                            ]
+                                                            
+                                                            prop.children [
+                                                                Html.input [
+                                                                    prop.className "grow text-white"
+                                                                    prop.placeholder "Value..."
+                                                                    prop.onChange (fun (s:string) ->
+                                                                        Helperfuncs.updateAnnotation((fun anno -> 
+                                                                            let nextCell = {anno with Search.Body = anno.Search.Body.UpdateWithString(s)}
+                                                                            nextCell
+                                                                        ),revIndex,annoState, setState)
+                                                                    )
+                                                                ]
+                                                            ]
+                                                        ]
+                                                    ]
+                                                ]
+
+                                    ]
+                                ]
+                                ]
                             ]
-                        ]
-                    ]  
-                ] 
+                        ]  
+                    ] 
+                ]
             ]
-        ]

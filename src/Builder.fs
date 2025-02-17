@@ -218,7 +218,7 @@ type Builder =
                                 if term.Length <> 0 then 
                                     modalContext.setter {
                                         isActive = true;
-                                        location =e.clientX - bounds.left, rect.bottom - relativeParent.top + window.scrollY
+                                        location =e.clientX - bounds.left, rect.bottom - relativeParent.top + 10.0
                                     }
                                     e.stopPropagation() 
                                     e.preventDefault()
@@ -227,13 +227,8 @@ type Builder =
                                 log "parent"    
                                 log bounds
                             )
-                            prop.className [
-                              "overflow-x-hidden h-[50rem] flex flex-row gap-2 w-full relative"
-                              // if modalContext.modalState.isActive = true then
-                              //   "overflow-y-hidden"
-                              // else
-                              //   "overflow-y-auto"
-                            ] 
+                            prop.className "overflow-x-hidden h-[50rem] flex flex-row gap-2 w-full relative"
+
                             prop.children [
                               match modalState.isActive with
                               |true -> Contextmenu.onContextMenu (modalContext, annoState, setState, elementID)
@@ -250,7 +245,7 @@ type Builder =
                                 
                               ]
                               Html.div [
-                                prop.className "relative w-1/3"
+                                prop.className "relative w-1/3 p-2"
                                 prop.children [
                                   if filehtml = Unset then
                                       Html.none

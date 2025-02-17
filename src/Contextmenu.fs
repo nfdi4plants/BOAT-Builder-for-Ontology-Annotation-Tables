@@ -48,7 +48,7 @@ module private Functions =
                 let range = selection.getRangeAt(0)
                 let rect = range.getBoundingClientRect()
                 let relativeParent = document.getElementById(elementID).getBoundingClientRect()
-                rect.bottom - relativeParent.top - 8.0
+                rect.bottom - relativeParent.top + 12.0
 
                 
             | _ -> 0.0    
@@ -76,7 +76,7 @@ module private Functions =
                 let range = selection.getRangeAt(0)
                 let rect = range.getBoundingClientRect()
                 let relativeParent = document.getElementById(elementID).getBoundingClientRect()
-                rect.bottom - relativeParent.top - 8.0
+                rect.bottom - relativeParent.top + 12.0
                 
             | _ -> 0.0     
 
