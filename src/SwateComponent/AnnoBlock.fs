@@ -190,19 +190,8 @@ type Components =
                                       if annoState[revIndex].Search.KeyType.IsTermColumn() then
                                           Searchblock.SearchElementBody(revIndex, annoState, setState)
                                           if annoState[revIndex].Search.Body.isUnitized then
-                                                // Daisy.formControl [
-                                                //     prop.autoFocus true
-                                                //     prop.className "text-white w-full"
-                                                //     prop.placeholder "Value..."
-                                                //     prop.onChange (fun (s:string) ->
-                                                //         Helperfuncs.updateAnnotation((fun anno -> 
-                                                //             let nextCell = {anno with Search.Body = anno.Search.Body.UpdateWithString(s)}
-                                                //             nextCell
-                                                //         ),revIndex,annoState, setState)
-                                                //     )
-                                                // ]
                                                 Daisy.formControl [
-                                                    prop.className "max-w-full"
+                                                    prop.className "max-w-32"
                                                     prop.children [
                                                         Html.div [
                                                             prop.className [

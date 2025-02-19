@@ -182,7 +182,7 @@ type Builder =
             prop.onClick (fun e -> modalContext.setter initialModal)
             prop.children [
                 Html.div [
-                    prop.className "w-1/5 p-2"
+                    prop.className "w-1/5 px-2"
                     prop.children [
                         Html.h1 [
                             prop.className "mb-2"
@@ -194,7 +194,7 @@ type Builder =
                     ]
                 ]
                 Html.div [
-                    prop.className "w-4/5 p-2"
+                    prop.className "w-4/5 px-2"
                     prop.children [
                       match filehtml with
                         | Unset ->
@@ -206,53 +206,52 @@ type Builder =
                           ] 
                         | Docx fileString ->
                           Html.div [
-                            prop.id "paper"
-                            prop.onContextMenu (fun e ->
-                                // https://stackoverflow.com/a/2614472/12858021
-                                let Selection = window.getSelection()
-                                let term = Selection.ToString().Trim()
-                                let parent = document.getElementById("paper")
-                                let bounds = parent.getBoundingClientRect()
-                                let rect = Selection.getRangeAt(0).getBoundingClientRect()
-                                let relativeParent = document.getElementById(elementID).getBoundingClientRect()
-                                if term.Length <> 0 then 
-                                    modalContext.setter {
-                                        isActive = true;
-                                        location =e.clientX - bounds.left, rect.bottom - relativeParent.top + 10.0
-                                    }
-                                    e.stopPropagation() 
-                                    e.preventDefault()
-                                else 
-                                    ()
-                                log "parent"    
-                                log bounds
-                            )
                             prop.className "overflow-x-hidden h-[50rem] flex flex-row gap-2 w-full relative"
-
                             prop.children [
                               match modalState.isActive with
                               |true -> Contextmenu.onContextMenu (modalContext, annoState, setState, elementID)
                               |false -> Html.none
                               Html.div [
                                 prop.className "w-2/3"
+                                prop.onContextMenu (fun e ->
+                                    // https://stackoverflow.com/a/2614472/12858021
+                                    let Selection = window.getSelection()
+                                    let term = Selection.ToString().Trim()
+                                    let rect = Selection.getRangeAt(0).getBoundingClientRect()
+                                    let relativeParent = document.getElementById(elementID).getBoundingClientRect()
+                                    if term.Length <> 0 then 
+                                        modalContext.setter {
+                                            isActive = true;
+                                            location =rect.right - relativeParent.left , rect.bottom - relativeParent.top + 12.0
+                                        }
+                                        e.stopPropagation() 
+                                        e.preventDefault()
+                                    else 
+                                        () 
+                                )
                                 prop.children [
                                   Html.div [
                                       prop.text fileName
-                                      prop.className "mb-2"
+                                      prop.className "mb-2 fixed bg-[#183641] z-50"
+                                      prop.style [
+                                          style.width.inheritFromParent
+                                      ]
                                   ]
                                   FileUpload.DisplayHtml(fileString, annoState, elementID)
                                 ]
-                                
                               ]
                               Html.div [
-                                prop.className "relative w-1/3 p-2"
+                                prop.className "w-1/3"
                                 prop.children [
                                   if filehtml = Unset then
                                       Html.none
                                   else
                                       Html.div [
                                           prop.text "Annotations"
-                                          prop.className "mb-2"
+                                          prop.className "mb-2 fixed bg-[#183641] z-50"
+                                          prop.style [
+                                            style.width.inheritFromParent
+                                        ]
                                       ]
                                   for a in 0 .. annoState.Length - 1 do
                                       App.Components.AnnoBlockwithSwate(annoState, setState, a)    

@@ -145,8 +145,7 @@ module Contextmenu =
                 style.backgroundColor " "
                 style.position.absolute
                 style.left (int mousex)
-                if mousey > (int (window.innerHeight - 200.0)) then style.top ( int (mousey - 200.0)) //if the mouse is closer than 200px to the lower border, then shift the cm 200pc above
-                else style.top (int mousey)
+                style.top (int mousey)
                 style.width 150
                 style.zIndex 40
             ]
