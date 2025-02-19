@@ -39,14 +39,36 @@ type Navbar =
 
     static member NavbarButton(text: string, onClick: unit -> unit, ?disabled) = 
       let disabled = defaultArg disabled false
-      Daisy.button.a [ 
-          prop.text text
-          prop.className [
-            "btn-outline"
-          ]
-          prop.onClick (fun _ -> onClick())
+      if text = "Download" then
+        Html.select [
+          prop.className "select btn-outline"
           prop.disabled disabled
-      ]
+          prop.children [
+            Html.option [
+              prop.text text 
+              prop.hidden true
+              prop.selected true
+            ]
+            Html.option [
+              prop.text "as .xlsx"
+              prop.onClick (fun e -> ())
+            ]
+            Html.option [
+              prop.text "as .json"
+              prop.onClick (fun e -> ())
+            ]
+          ]
+        ]
+        else
+          Daisy.button.a [ 
+              prop.text text
+              prop.className [
+                "btn-outline"
+              ]
+              prop.onClick (fun _ -> onClick())
+              prop.disabled disabled
+          ]
+          
 
     static member Main(setPage: Types.Page -> unit, statePage: Types.Page, annoState, setAnnoState) =
         let modalState, toggleState = React.useState(false)
