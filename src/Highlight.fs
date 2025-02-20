@@ -97,7 +97,7 @@ type PaperWithMarker =
     Html.div [
       Daisy.modal.dialog [
         prop.className [
-          if APIwarningModalState && not hasClosed then 
+          if APIwarningModalState = true && not hasClosed then 
             "modal-open"
         ]
         prop.children [

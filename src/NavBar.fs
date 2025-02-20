@@ -40,23 +40,25 @@ type Navbar =
     static member NavbarButton(text: string, onClick: unit -> unit, ?disabled) = 
       let disabled = defaultArg disabled false
       if text = "Download" then
-        Html.select [
-          prop.className "select btn-outline"
-          prop.disabled disabled
-          prop.children [
-            Html.option [
-              prop.text text 
-              prop.hidden true
-              prop.selected true
-            ]
-            Html.option [
-              prop.text "as .xlsx"
-              prop.onClick (fun e -> ())
-            ]
-            Html.option [
-              prop.text "as .json"
-              prop.onClick (fun e -> ())
-            ]
+        Daisy.dropdown [
+          Daisy.button.button [
+              prop.className "btn-outline"
+              prop.text text
+              prop.disabled disabled
+          ]
+          Daisy.dropdownContent [
+              prop.className "p-2 shadow menu bg-base-100 rounded-box w-52"
+              prop.tabIndex 0
+              prop.children [
+                  Html.li [Html.a [
+                    prop.text "as .xlsx"
+                    prop.onClick (fun _ -> onClick())
+                  ]]
+                  Html.li [Html.a [
+                    prop.text "as .json"
+                    prop.onClick (fun _ -> onClick())
+                  ]]
+              ]
           ]
         ]
         else
@@ -68,6 +70,7 @@ type Navbar =
               prop.onClick (fun _ -> onClick())
               prop.disabled disabled
           ]
+
           
 
     static member Main(setPage: Types.Page -> unit, statePage: Types.Page, annoState, setAnnoState) =
@@ -87,18 +90,13 @@ type Navbar =
                             Html.img [ prop.src logo; prop.height 70; prop.width 70]
                         ]
                     ] 
-                    Html.div [ prop.text "BOAT - Builder for Ontology ARC Templates"; prop.className "font-semibold" ]
+                    Html.div [ prop.text "BOAT - Builder for Ontology ARC Tables"; prop.className "font-semibold" ]
                   ]
                 ]
 
                 Daisy.navbarCenter [
                   prop.className "gap-2"
                   prop.children [
-                    Navbar.NavbarButton(
-                      "Builder",
-                      fun _ -> setPage(Types.Page.Builder)
-                    )
-
                     Navbar.NavbarButton(
                       "View annotations",
                       (fun _ -> toggleState(true)),
@@ -107,10 +105,11 @@ type Navbar =
                 
                     Navbar.NavbarButton(
                       "Download",
-                      (fun _ -> ()),
+                      (fun _ -> ()), //replace with download funcgtion
                       disabled = List.isEmpty annoState
                     )
                   ]
+                
 
                 ]
 
@@ -118,17 +117,19 @@ type Navbar =
                   prop.className "gap-2"
                   prop.children [
                     Daisy.button.a [ 
-                        prop.text "Help"
+                        prop.text "Builder"
                         prop.className "hover:bg-[#3f8fae]"
-                        prop.onClick (fun _ -> setPage(Types.Page.Help)) 
-                        ]
+                        prop.onClick (fun _ -> setPage(Types.Page.Builder)) 
+                    ]
                     Daisy.button.a [ 
                         prop.text "Contact"
                         prop.className "hover:bg-[#3f8fae]"
                         prop.onClick (fun _ -> setPage(Types.Page.Contact)) 
-                        // prop.children [
-                        //     Html.i [prop.className "fa-brands fa-github"; prop.style [style.fontSize (length.rem 3)]]
-                        // ]
+                    ]
+                    Daisy.button.a [ 
+                        prop.text "Help"
+                        prop.className "hover:bg-[#3f8fae]"
+                        prop.onClick (fun _ -> setPage(Types.Page.Help)) 
                     ]
                     Html.a [
                       prop.href "https://github.com/nfdi4plants/BOAT-Builder-for-Ontology-ARC-Templates"
