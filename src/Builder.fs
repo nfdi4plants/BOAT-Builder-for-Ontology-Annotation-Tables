@@ -249,7 +249,8 @@ type Builder =
                                   else
                                       Html.div [
                                           prop.text "Annotations"
-                                          prop.className "mb-2 fixed bg-[#183641] z-50 top-20"
+                                          prop.className "mb-2"
+                                          // prop.className "mb-2 fixed bg-[#183641] z-50 top-20"
                                           prop.style [
                                             style.width.inheritFromParent
                                         ]
