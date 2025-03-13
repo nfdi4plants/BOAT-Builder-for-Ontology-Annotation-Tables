@@ -122,7 +122,7 @@ type PaperWithMarker =
       Html.div [  
         prop.custom ("data-theme", "light")  
         prop.dangerouslySetInnerHTML htmlString
-        prop.className "prose p-2 rounded-lg max-w-fit mt-8"  
+        prop.className "prose p-2 rounded-lg max-w-fit"  
         prop.id elementID   
         prop.ref ref      
       ]

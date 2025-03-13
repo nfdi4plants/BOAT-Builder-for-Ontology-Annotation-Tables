@@ -42,15 +42,15 @@ type BaseDropdown =
         Html.div [
             prop.ref ref
             prop.className [
-                "dropdown"
-                if isOpen then "dropdown-open"
                 if style.IsSome then style.Value.StyleString
             ]
+            prop.onClick (fun e -> setIsOpen true)
             prop.children [
                 toggle
                 Html.ul [
                     prop.className [
-                        "dropdown-content min-w-48 menu bg-base-200 rounded-box z-[1] p-2 shadow !top-[110%]"
+                        if isOpen = true then "dropdown-content min-w-48 menu bg-base-200 rounded-box z-[1] p-2 shadow !top-[110%]"
+                        else "hidden" //false
                         if style.IsSome then style.Value.GetSubclassStyle "content"
                     ]
                     prop.children children

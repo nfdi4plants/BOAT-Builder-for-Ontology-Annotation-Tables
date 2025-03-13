@@ -232,7 +232,7 @@ type Builder =
                                 prop.children [
                                   Html.div [
                                       prop.text fileName
-                                      prop.className "mb-2 fixed bg-[#183641] z-50 top-20"
+                                      prop.className "mb-2"
                                       prop.style [
                                           style.width.inheritFromParent
                                       ]

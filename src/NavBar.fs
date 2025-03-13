@@ -26,7 +26,7 @@ type Navbar =
                   ]
                 ]
                 Html.div [
-                  prop.className "p-inherit overflow-hidden"
+                  prop.className "p-inherit overflow-auto"
                   prop.children [
                     PreviewTable.table(annoState, setAnnoState, toggleActive)
                   ]

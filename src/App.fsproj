@@ -12,6 +12,7 @@
     <Compile Include="Mammoth.fs" />
     <Compile Include="Highlight.fs" />
     <Compile Include="FileUploader.fs" />
+    <Compile Include="SwateComponent\SWATEShared\React.useListener.fs" />
     <Compile Include="SwateComponent\SWATEShared\Database.fs" />
     <Compile Include="SwateComponent\SWATEShared\DTOS\ParentTermQueryDto.fs" />
     <Compile Include="SwateComponent\SWATEShared\DTOS\TermQueryDto.fs" />
