@@ -29,6 +29,7 @@
     <Compile Include="SwateComponent\TermSearchInput.fs" />
     <Compile Include="SwateComponent\AnnoBlock.fs" />
     <Compile Include="SwateComponent\PreviewTable.fs" />
+    <Compile Include="DownloadParser.fs" />
     <Compile Include="Builder.fs" />
     <Compile Include="NavBar.fs" />
     <Compile Include="Footer.fs" />
@@ -45,5 +46,6 @@
     <PackageReference Include="Feliz.Router" Version="4.0.0" />
     <PackageReference Include="Fable.SimpleJson" Version="3.24.0" />
     <PackageReference Include="ARCtrl" Version="2.0.0-swate" />
+    <PackageReference Include="ARCtrl.Javascript" Version="2.5.1" />
   </ItemGroup>
 </Project>

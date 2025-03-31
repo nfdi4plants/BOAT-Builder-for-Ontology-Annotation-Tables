@@ -3,7 +3,6 @@ namespace Components
 open Feliz
 open Feliz.DaisyUI
 
-
 type Navbar =
 
     static member AnnotationModal (isActive: bool, toggleActive: bool -> unit, annoState, setAnnoState) = 
@@ -35,9 +34,11 @@ type Navbar =
             ]
           ]
         ]
+
       
 
     static member NavbarButton(text: string, onClick: unit -> unit, ?disabled) = 
+      
       let disabled = defaultArg disabled false
       if text = "Download" then
         Daisy.dropdown [
@@ -77,7 +78,7 @@ type Navbar =
         let modalState, toggleState = React.useState(false)
         let logo = StaticFile.import "./img/DataPLANT_logo_bg_transparent.svg"
         Daisy.navbar [
-            prop.className "bg-base-300 shadow-lg p-0"
+            prop.className "bg-base-300 shadow-lg p-0 sticky top-0 z-50"
             prop.children [
                 Navbar.AnnotationModal(modalState, toggleState, annoState, setAnnoState)
                 Daisy.navbarStart [
