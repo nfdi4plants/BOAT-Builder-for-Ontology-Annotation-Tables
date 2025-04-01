@@ -53,11 +53,11 @@ type Navbar =
               prop.children [
                   Html.li [Html.a [
                     prop.text "as .xlsx"
-                    prop.onClick (fun _ -> onClick())
+                    prop.onClick (fun _ -> DownloadParser.downloadXlsxProm() |> Promise.start)
                   ]]
                   Html.li [Html.a [
                     prop.text "as .json"
-                    prop.onClick (fun _ -> onClick())
+                    prop.onClick (fun _ -> DownloadParser.downloadJsonProm() |> Promise.start)
                   ]]
               ]
           ]
@@ -75,8 +75,8 @@ type Navbar =
           
 
     static member Main(setPage: Types.Page -> unit, statePage: Types.Page, annoState, setAnnoState) =
-        let modalState, toggleState = React.useState(false)
         let logo = StaticFile.import "./img/DataPLANT_logo_bg_transparent.svg"
+        let modalState, toggleState = React.useState(false)
         Daisy.navbar [
             prop.className "bg-base-300 shadow-lg p-0 sticky top-0 z-50"
             prop.children [

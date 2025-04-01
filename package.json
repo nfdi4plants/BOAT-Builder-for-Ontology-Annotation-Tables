@@ -6,7 +6,9 @@
     "clean": "dotnet fable clean src --yes"
   },
   "dependencies": {
+    "@nfdi4plants/exceljs": "^0.3.0",
     "@tailwindcss/vite": "^4.0.6",
+    "exceljs": "^4.4.0",
     "mammoth": "^1.8.0",
     "memoize-one": "^6.0.0",
     "prop-types": "^15.8.1",

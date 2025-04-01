@@ -2,14 +2,19 @@ module DownloadParser
 
 open ARCtrl
 open Fable.Remoting.Client
-//open ARCrtl.JavaScript
+
+
 
 let growth = ArcTable.init("Growth")
+let userTable = ArcTable.init("myTable") // possible userinput to change table name
 
 // create ontology annotation for "species"
+
+// let oa_ofTable =
+//     for a in 
 let oa_species =
     OntologyAnnotation(
-        "species", "NCIT", "NCIT:C45293"
+        "species", "NCIT", "NCIT:C45293" //Key
     )
 // create ontology annotation for "chlamy"
 let oa_chlamy =
@@ -52,10 +57,11 @@ growth.AddColumn(
     CompositeHeader.Output IOType.Sample,
     [|CompositeCell.createFreeText "Output1"|]
 )
-
+///////////////
 let prevFileName = "<PLACEHOLDER>"
 
-let template =
+let template = 
+  // create a template with the given file name
   Template.create(
       System.Guid.NewGuid(),
       growth,
@@ -63,13 +69,12 @@ let template =
       lastUpdated = System.DateTime.UtcNow
   )
 
-open ARCtrl.XlsxHelper
-open FsSpreadsheet
-open Fable.Remoting.Client
+open FsSpreadsheet.Js
+open ARCtrl.Json
 
-let download(filename, bytes:byte []) = bytes.SaveFileAs(filename)
+let private download(filename, bytes:byte []) = bytes.SaveFileAs(filename)
 
-let downloadFromString(filename, content:string) =
+let private downloadFromString(filename, content:string) =
     let bytes = System.Text.Encoding.UTF8.GetBytes(content)
     bytes.SaveFileAs(filename)
 
@@ -78,8 +83,8 @@ let downloadXlsxProm() =
     let! bytes =
       Spreadsheet.Template.toFsWorkbook 
         template
-        |> Js.Xlsx.toXlsxBytes
-    download("PLACEHOLDER FILE NAME", bytes)
+        |> Xlsx.toXlsxBytes 
+    download("ExamplePaper" + ".xlsx", bytes)
   }
 
 open ARCtrl.Json
@@ -87,5 +92,5 @@ open ARCtrl.Json
 let downloadJsonProm() =
   promise {
     let jsonString = Template.toJsonString 0 template
-    downloadFromString("PLACEHOLDER FILE NAME", jsonString)
+    downloadFromString("ExamplePaper" + ".json", jsonString)
   }

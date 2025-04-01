@@ -45,7 +45,6 @@
     <PackageReference Include="Feliz.DaisyUI" Version="4.2.1" />
     <PackageReference Include="Feliz.Router" Version="4.0.0" />
     <PackageReference Include="Fable.SimpleJson" Version="3.24.0" />
-    <PackageReference Include="ARCtrl" Version="2.0.0-swate" />
-    <PackageReference Include="ARCtrl.Javascript" Version="2.5.1" />
+    <PackageReference Include="ARCtrl.Javascript" Version="2.3.1" />
   </ItemGroup>
 </Project>
