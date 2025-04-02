@@ -37,7 +37,7 @@ type Navbar =
 
       
 
-    static member NavbarButton(text: string, onClick: unit -> unit, ?disabled) = 
+    static member NavbarButton(text: string, onClick: unit -> unit, annoState, ?disabled) = 
       
       let disabled = defaultArg disabled false
       if text = "Download" then
@@ -53,11 +53,11 @@ type Navbar =
               prop.children [
                   Html.li [Html.a [
                     prop.text "as .xlsx"
-                    prop.onClick (fun _ -> DownloadParser.downloadXlsxProm() |> Promise.start)
+                    prop.onClick (fun _ -> DownloadParser.downloadXlsxProm("wiwiwi",annoState) |> Promise.start)
                   ]]
                   Html.li [Html.a [
                     prop.text "as .json"
-                    prop.onClick (fun _ -> DownloadParser.downloadJsonProm() |> Promise.start)
+                    prop.onClick (fun _ -> DownloadParser.downloadJsonProm("wiwiwi",annoState) |> Promise.start)
                   ]]
               ]
           ]
@@ -101,12 +101,14 @@ type Navbar =
                     Navbar.NavbarButton(
                       "View annotations",
                       (fun _ -> toggleState(true)),
+                      annoState,
                       disabled = List.isEmpty annoState
                     )
                 
                     Navbar.NavbarButton(
                       "Download",
                       (fun _ -> ()), //replace with download funcgtion
+                      annoState,
                       disabled = List.isEmpty annoState
                     )
                   ]

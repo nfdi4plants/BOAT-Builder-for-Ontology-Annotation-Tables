@@ -2,11 +2,10 @@ module DownloadParser
 
 open ARCtrl
 open Fable.Remoting.Client
-
+open Types
 
 
 let growth = ArcTable.init("Growth")
-let userTable = ArcTable.init("myTable") // possible userinput to change table name
 
 // create ontology annotation for "species"
 
@@ -31,6 +30,12 @@ let oa_day =
     OntologyAnnotation(
         "day", "UO", "UO:0000033"
     )
+
+// let oa_user (annoState: Annotation list) =
+//     for a in annoState do
+//         match a.Search.Key with
+//         | oa-> OntologyAnnotation(oa.NameText, oa.TermSourceREF.Value, oa.TermAccessionNumber.Value)
+//         | _ -> OntologyAnnotation("", "", "")
 
 // This will create an input column with one row cell.
 // In xlsx this will be exactly 1 column.
@@ -57,17 +62,43 @@ growth.AddColumn(
     CompositeHeader.Output IOType.Sample,
     [|CompositeCell.createFreeText "Output1"|]
 )
-///////////////
-let prevFileName = "<PLACEHOLDER>"
 
-let template = 
+let userTablewithColumns (annoState: Annotation list, fileName: string) =
+    let userTable = ArcTable.init(fileName) // possible userinput to change table name
+    for a in annoState do
+        let header =
+            match a.Search.KeyType with
+            |CompositeHeaderDiscriminate.Component -> CompositeHeader.Component a.Search.Key
+            |CompositeHeaderDiscriminate.Characteristic -> CompositeHeader.Characteristic a.Search.Key
+            |CompositeHeaderDiscriminate.Parameter -> CompositeHeader.Parameter a.Search.Key
+            |CompositeHeaderDiscriminate.Factor -> CompositeHeader.Factor a.Search.Key
+            |_ -> CompositeHeader.OfHeaderString (a.Search.KeyType.ToString())
+            
+        userTable.AddColumn(
+            header,
+            [|a.Search.Body|]
+        )
+    userTable
+///////////////
+
+
+let testTemplate = 
   // create a template with the given file name
   Template.create(
       System.Guid.NewGuid(),
       growth,
-      prevFileName,
+      "<PLACEHOLDER>",
       lastUpdated = System.DateTime.UtcNow
   )
+
+let userTemplate (fileName: string, annoState: Annotation list) =
+    Template.create(
+        System.Guid.NewGuid(),
+        userTablewithColumns (annoState, fileName),
+        fileName,
+        lastUpdated = System.DateTime.UtcNow
+        
+    )
 
 open FsSpreadsheet.Js
 open ARCtrl.Json
@@ -78,19 +109,19 @@ let private downloadFromString(filename, content:string) =
     let bytes = System.Text.Encoding.UTF8.GetBytes(content)
     bytes.SaveFileAs(filename)
 
-let downloadXlsxProm() =
+let downloadXlsxProm(fileName, annoState) =
   promise {
     let! bytes =
       Spreadsheet.Template.toFsWorkbook 
-        template
+        (userTemplate(fileName, annoState))
         |> Xlsx.toXlsxBytes 
-    download("ExamplePaper" + ".xlsx", bytes)
+    download(fileName + "Table" + ".xlsx", bytes)
   }
 
 open ARCtrl.Json
 
-let downloadJsonProm() =
+let downloadJsonProm(fileName, annoState) =
   promise {
-    let jsonString = Template.toJsonString 0 template
-    downloadFromString("ExamplePaper" + ".json", jsonString)
+    let jsonString = Template.toJsonString 0 (userTemplate(fileName, annoState))
+    downloadFromString(fileName + "Table" + ".json", jsonString)
   }
