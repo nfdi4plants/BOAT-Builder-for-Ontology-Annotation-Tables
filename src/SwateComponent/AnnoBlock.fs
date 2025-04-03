@@ -120,8 +120,7 @@ type Components =
        
         let (ui: BuildingBlock.BuildingBlockUIState, setUi) = React.useState(BuildingBlock.BuildingBlockUIState.init)        
 
-        let revIndex = annoState.Length - 1 - index
-        let a = annoState.[revIndex]
+        let a = annoState.[index]
 
         
         Html.div [
@@ -132,7 +131,7 @@ type Components =
                 style.top (int a.Height)
             ]
             prop.children [
-            if annoState[revIndex].IsOpen = false then 
+            if annoState[index].IsOpen = false then 
                 Html.button [
                     prop.className "cursor-pointer"
                     prop.children [
@@ -141,7 +140,7 @@ type Components =
                             prop.style [style.color "#ffe699"]
                             prop.onClick (fun e ->
                                 
-                                Helperfuncs.updateAnnotation ((fun e -> e.ToggleOpen()), revIndex, annoState, setState)                            
+                                Helperfuncs.updateAnnotation ((fun e -> e.ToggleOpen()), index, annoState, setState)                            
                             )
                         ]
                     ]
@@ -155,7 +154,7 @@ type Components =
                             prop.children [
                               Html.div [
                                   prop.className "cursor-pointer hover:text-info" 
-                                  prop.onClick (fun e -> Helperfuncs.updateAnnotation ((fun a -> a.ToggleOpen()), revIndex, annoState, setState))
+                                  prop.onClick (fun e -> Helperfuncs.updateAnnotation ((fun a -> a.ToggleOpen()), index, annoState, setState))
                                   prop.children [
                                       Html.span [
                                           Html.i [
@@ -173,7 +172,7 @@ type Components =
                                           Html.span [
                                               prop.className "mt-0 cursor-pointer hover:text-error transition-colors"
                                               prop.onClick (fun _ -> 
-                                                  let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[revIndex] |> not)  
+                                                  let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[index] |> not)  
                                                   // List.removeAt (List.filter (fun x -> x = a) state) state
                                                   setState newAnnoList
                                               )
@@ -187,10 +186,10 @@ type Components =
                                           ]
                                         ]
                                       ]
-                                      Searchblock.SearchElementKey (ui, setUi,annoState, setState, revIndex)
-                                      if annoState[revIndex].Search.KeyType.IsTermColumn() then
-                                          Searchblock.SearchElementBody(revIndex, annoState, setState)
-                                          if annoState[revIndex].Search.Body.isUnitized then
+                                      Searchblock.SearchElementKey (ui, setUi,annoState, setState, index)
+                                      if annoState[index].Search.KeyType.IsTermColumn() then
+                                          Searchblock.SearchElementBody(index, annoState, setState)
+                                          if annoState[index].Search.Body.isUnitized then
                                                 Daisy.formControl [
                                                     prop.className "max-w-32"
                                                     prop.children [
@@ -207,9 +206,9 @@ type Components =
                                                                         Helperfuncs.updateAnnotation((fun anno -> 
                                                                             let nextCell = {anno with Search.Body = anno.Search.Body.UpdateWithString(s)}
                                                                             nextCell
-                                                                        ),revIndex,annoState, setState)
+                                                                        ),index,annoState, setState)
                                                                     )
-                                                                    match annoState.[revIndex].Search.Body with
+                                                                    match annoState.[index].Search.Body with
                                                                     |CompositeCell.Unitized (v,oa) ->
                                                                             prop.valueOrDefault v
                                                                     | _ -> ()

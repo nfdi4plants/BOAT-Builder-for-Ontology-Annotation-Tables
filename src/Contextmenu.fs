@@ -55,8 +55,9 @@ module private Functions =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = Annotation.init(OntologyAnnotation(term), body = CompositeCell.Term(OntologyAnnotation("")) , height = yCoordinateOfSelection)::closedList
-            setState newAnnoList
+            let newAnnoList = [Annotation.init(OntologyAnnotation(term), body = CompositeCell.Term(OntologyAnnotation("")) , height = yCoordinateOfSelection)]
+
+            setState (List.append closedList newAnnoList)
             // let newAnnoList = Annotation.init(OntologyAnnotation(term), height = yCoordinateOfSelection)::state
             // setState newAnnoList
 
@@ -82,8 +83,9 @@ module private Functions =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = Annotation.init(key =OntologyAnnotation(""), body = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)::closedList
-            setState newAnnoList
+            let newAnnoList = [Annotation.init(key =OntologyAnnotation(""), body = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)]
+
+            setState (List.append closedList newAnnoList)
         // let newAnnoList = Annotation.init(value = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)::state
         // setState newAnnoList
             
@@ -99,11 +101,11 @@ module private Functions =
         let term = window.getSelection().ToString().Trim()
         if term.Length <> 0 then 
             let updatetedAnno = 
-                {state.[0] with Search.Key = OntologyAnnotation(name = term)}
+                {state.[state.Length - 1] with Search.Key = OntologyAnnotation(name = term)}
 
             let newAnnoList =
                 state
-                |> List.mapi (fun i elem -> if i = 0 then updatetedAnno else elem)
+                |> List.mapi (fun i elem -> if i = state.Length - 1 then updatetedAnno else elem)
 
             setState newAnnoList
 
@@ -111,11 +113,11 @@ module private Functions =
         let term = window.getSelection().ToString().Trim()
         if term.Length <> 0 then 
             let updatetedAnno = 
-                {state.[0] with Search.Body = CompositeCell.createFreeText(term)}
+                {state.[state.Length - 1] with Search.Body = CompositeCell.createFreeText(term)}
 
             let newAnnoList =
                 state
-                |> List.mapi (fun i elem -> if i = 0 then updatetedAnno else elem)
+                |> List.mapi (fun i elem -> if i = state.Length - 1 then updatetedAnno else elem)
 
             setState newAnnoList
 

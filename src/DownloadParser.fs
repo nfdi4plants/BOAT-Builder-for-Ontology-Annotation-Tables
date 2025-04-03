@@ -65,9 +65,7 @@ growth.AddColumn(
 
 let userTablewithColumns (annoState: Annotation list, fileName: string) =
     let userTable = ArcTable.init(fileName) // possible userinput to change table name
-    for i in 0 .. annoState.Length - 1 do
-        let revIndex = annoState.Length - 1 - i
-        let a = annoState.[revIndex] 
+    for a in annoState do
         let header =
             match a.Search.KeyType with
             |CompositeHeaderDiscriminate.Component -> CompositeHeader.Component a.Search.Key
