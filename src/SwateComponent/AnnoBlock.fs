@@ -123,6 +123,7 @@ type Components =
         let revIndex = annoState.Length - 1 - index
         let a = annoState.[revIndex]
 
+        
         Html.div [
             prop.style [
                 style.position.absolute
@@ -208,6 +209,10 @@ type Components =
                                                                             nextCell
                                                                         ),revIndex,annoState, setState)
                                                                     )
+                                                                    match annoState.[revIndex].Search.Body with
+                                                                    |CompositeCell.Unitized (v,oa) ->
+                                                                            prop.valueOrDefault v
+                                                                    | _ -> ()
                                                                 ]
                                                             ]
                                                         ]

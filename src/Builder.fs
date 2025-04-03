@@ -19,7 +19,7 @@ module List =
 
 type Builder =
     [<ReactComponent>]
-    static member Main (annoState: Annotation list, setState: Annotation list -> unit, isLocalStorageClear: string -> unit -> bool, elementID, modalState, modalContext) =
+    static member Main (annoState: Annotation list, setState: Annotation list -> unit, isLocalStorageClear: string -> unit -> bool, elementID, modalState,fileName: string, setFileName, setLocalFileName) =
 
         let initialFile (id: string) =
             if isLocalStorageClear id () = true then Unset
@@ -27,17 +27,7 @@ type Builder =
 
         let (filehtml: UploadedFile), setFilehtml = React.useState(initialFile "file")
 
-        let setLocalFileName (id: string)(nextNAme: string) =
-            let JSONstring= 
-                Json.stringify nextNAme 
 
-            Browser.WebStorage.localStorage.setItem(id, JSONstring)
-
-        let initialFileName (id: string) =
-            if isLocalStorageClear id () = true then ""
-            else Json.parseAs<string> (Browser.WebStorage.localStorage.getItem id)  
-
-        let fileName, setFileName = React.useState(initialFileName "fileName")
 
         let initialModal = {
             isActive = false

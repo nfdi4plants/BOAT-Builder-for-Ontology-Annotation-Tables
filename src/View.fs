@@ -35,8 +35,21 @@ type View =
             setAnnotationState state
             setLocalStorageAnnotation "Annotations" state    
 
-        
-          
+        let setLocalFileName (id: string)(nextNAme: string) =
+            let JSONstring= 
+                Json.stringify nextNAme 
+            Browser.WebStorage.localStorage.setItem(id, JSONstring)
+
+
+        let initialFileName (id: string) =
+            if isLocalStorageClear id () = true then ""
+            else Json.parseAs<string> (Browser.WebStorage.localStorage.getItem id)  
+
+        let fileName, setFileName = React.useState(initialFileName "fileName")
+
+        let fileNamewithoutType =
+            fileName.Split(".").[0] //splits the file name and takes the first part before the dot
+
 
         let (modalState: ModalInfo, setModal) =
             React.useState(Contextmenu.initialModal)               
@@ -56,7 +69,7 @@ type View =
                     prop.id "mainView"
                     prop.className "flex min-h-screen flex-col"
                     prop.children [
-                        Components.Navbar.Main(setpage,currentpage, AnnotationState, setState)
+                        Components.Navbar.Main(setpage,currentpage, AnnotationState, setState, fileNamewithoutType)
                         Html.div [
                             prop.id "contentView"
                             prop.className "grow"
@@ -69,7 +82,9 @@ type View =
                                     isLocalStorageClear,
                                     elementID,
                                     modalState,
-                                    myModalContext
+                                    fileName, 
+                                    setFileName, 
+                                    setLocalFileName
                                   )
                                 |Types.Page.Contact -> Components.Contact.Main()
                                 |Types.Page.Help -> Components.Help.Main()

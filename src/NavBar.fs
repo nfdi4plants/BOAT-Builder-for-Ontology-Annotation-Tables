@@ -37,7 +37,7 @@ type Navbar =
 
       
 
-    static member NavbarButton(text: string, onClick: unit -> unit, annoState, ?disabled) = 
+    static member NavbarButton(text: string, onClick: unit -> unit, annoState,fileName: string, ?disabled) = 
       
       let disabled = defaultArg disabled false
       if text = "Download" then
@@ -53,11 +53,11 @@ type Navbar =
               prop.children [
                   Html.li [Html.a [
                     prop.text "as .xlsx"
-                    prop.onClick (fun _ -> DownloadParser.downloadXlsxProm("wiwiwi",annoState) |> Promise.start)
+                    prop.onClick (fun _ -> DownloadParser.downloadXlsxProm(fileName,annoState) |> Promise.start)
                   ]]
                   Html.li [Html.a [
                     prop.text "as .json"
-                    prop.onClick (fun _ -> DownloadParser.downloadJsonProm("wiwiwi",annoState) |> Promise.start)
+                    prop.onClick (fun _ -> DownloadParser.downloadJsonProm(fileName,annoState) |> Promise.start)
                   ]]
               ]
           ]
@@ -74,7 +74,7 @@ type Navbar =
 
           
 
-    static member Main(setPage: Types.Page -> unit, statePage: Types.Page, annoState, setAnnoState) =
+    static member Main(setPage: Types.Page -> unit, statePage: Types.Page, annoState, setAnnoState, fileName) =
         let logo = StaticFile.import "./img/DataPLANT_logo_bg_transparent.svg"
         let modalState, toggleState = React.useState(false)
         Daisy.navbar [
@@ -102,6 +102,7 @@ type Navbar =
                       "View annotations",
                       (fun _ -> toggleState(true)),
                       annoState,
+                      fileName,
                       disabled = List.isEmpty annoState
                     )
                 
@@ -109,6 +110,7 @@ type Navbar =
                       "Download",
                       (fun _ -> ()), //replace with download funcgtion
                       annoState,
+                      fileName,
                       disabled = List.isEmpty annoState
                     )
                   ]

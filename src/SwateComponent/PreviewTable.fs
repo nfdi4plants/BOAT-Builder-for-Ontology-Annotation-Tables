@@ -29,13 +29,15 @@ module PreviewTable =
                             ]
                         Html.tbody [
                         for a in 0 .. annoState.Length - 1 do
+                            let revIndex = annoState.Length - 1 - a
+                        
                             let isBodyempty = 
-                                match annoState[a].Search.Body with
+                                match annoState[revIndex].Search.Body with
                                 | CompositeCell.Term oa -> System.String.IsNullOrWhiteSpace oa.NameText
                                 | CompositeCell.Unitized (v,oa) -> System.String.IsNullOrWhiteSpace v
                                 | _ -> true
                                 
-                            let isKeyempty = System.String.IsNullOrWhiteSpace annoState[a].Search.Key.NameText
+                            let isKeyempty = System.String.IsNullOrWhiteSpace annoState[revIndex].Search.Key.NameText
 
                             if isBodyempty && isKeyempty  then
                                 Html.tr []
@@ -43,9 +45,9 @@ module PreviewTable =
                                 Html.tr [
                                     prop.children [
                                         Html.td [prop.text(a + 1); prop.className "border border-black text-black"]
-                                        Html.td [prop.text (annoState[a].Search.Key.NameText);prop.className "border border-black text-black"]
-                                        Html.td [prop.text (annoState[a].Search.KeyType.ToString()); prop.className "border border-black text-black"]
-                                        match annoState[a].Search.Body with
+                                        Html.td [prop.text (annoState[revIndex].Search.Key.NameText);prop.className "border border-black text-black"]
+                                        Html.td [prop.text (annoState[revIndex].Search.KeyType.ToString()); prop.className "border border-black text-black"]
+                                        match annoState[revIndex].Search.Body with
                                         | (CompositeCell.Term oa) -> 
                                             Html.td [prop.text(oa.NameText); prop.className "border border-black text-black"]
                                             Html.td [prop.text ""; prop.className "border border-black text-black"]
