@@ -27,7 +27,8 @@ type Builder =
 
         let (filehtml: UploadedFile), setFilehtml = React.useState(initialFile "file")
 
-
+        let (numPages: int option), setNumPages = React.useState(None)
+        let pageNumber, setPageNumber = React.useState(1)
 
         let initialModal = {
             isActive = false
@@ -129,11 +130,68 @@ type Builder =
                               ]
                             ]
                           ]
+                          | PDF fileString ->
+                            Html.div [
+                            prop.className "overflow-x-hidden h-[50rem] flex flex-row gap-2 w-full relative"
+                            prop.children [
+                              match modalState.isActive with
+                              |true -> Contextmenu.onContextMenu (modalContext, annoState, setState, elementID)
+                              |false -> Html.none
+                              Html.div [
+                                prop.className "w-2/3"
+                                prop.onContextMenu (fun e ->
+                                    // https://stackoverflow.com/a/2614472/12858021
+                                    let Selection = window.getSelection()
+                                    let term = Selection.ToString().Trim()
+                                    let rect = Selection.getRangeAt(0).getBoundingClientRect()
+                                    let relativeParent = document.getElementById(elementID).getBoundingClientRect()
+                                    if term.Length <> 0 then 
+                                        modalContext.setter {
+                                            isActive = true;
+                                            location =rect.right - relativeParent.left , rect.bottom - relativeParent.top + 12.0
+                                        }
+                                        e.stopPropagation() 
+                                        e.preventDefault()
+                                    else 
+                                        () 
+                                )
+                                prop.children [
+                                  Html.div [
+                                      prop.text fileName
+                                      prop.className "mb-2"
+                                      prop.style [
+                                          style.width.inheritFromParent
+                                      ]
+                                  ]
+                                  FileUpload.DisplayPDF fileString setNumPages numPages pageNumber
+                                ]
+                              ]
+                              Html.div [
+                                prop.className "w-1/3"
+                                prop.children [
+                                  if filehtml = Unset then
+                                      Html.none
+                                  else
+                                      Html.div [
+                                          prop.text "Annotations"
+                                          prop.className "mb-2"
+                                          // prop.className "mb-2 fixed bg-[#183641] z-50 top-20"
+                                          prop.style [
+                                            style.width.inheritFromParent
+                                        ]
+                                      ]
+                                  for a in 0 .. annoState.Length - 1 do
+                                      App.Components.AnnoBlockwithSwate(annoState, setState, a)    
+                                ]
+                              ]
+                            ]
+                          ]
+                          
+                    ]
+                  ]
                 ]
-              ]
             ]
-        ]
-        
+    
         
         
 

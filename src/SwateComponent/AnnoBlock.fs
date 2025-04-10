@@ -16,6 +16,15 @@ module private Helperfuncs =
                 if i = indx  then nextA else a 
             ) |> setState
 
+[<AutoOpen>]
+module private ARCtrlExtensions =
+    type CompositeCell with
+        member this.UpdateWithString(s: string) =
+            match this with
+            |CompositeCell.Unitized (_,oa) ->
+                CompositeCell.Unitized (s,oa) 
+            |_ -> this
+
 module Searchblock =
 
     let TermOrUnitizedSwitch ( a: int, annoState: Annotation list, setState: Annotation list -> unit) =
@@ -27,8 +36,10 @@ module Searchblock =
                 prop.onClick (fun _ -> 
                     (annoState |> List.mapi (fun i e ->
                         if i = a then {e with Search.Body = e.Search.Body.ToTermCell()}
+                        elif i= a then {e with Search.Body = e.Search.Body.UpdateWithString("")}
                         else e
                     )) |> setState
+
                 )
                 prop.text "Term"
             ]
@@ -103,15 +114,7 @@ module Searchblock =
             ]
         ]
 
-[<AutoOpen>]
 
-module private ARCtrlExtensions =
-    type CompositeCell with
-        member this.UpdateWithString(s: string) =
-            match this with
-            |CompositeCell.Unitized (_,oa) ->
-                CompositeCell.Unitized (s,oa) 
-            |_ -> this
     
 type Components =
     
@@ -211,12 +214,13 @@ type Components =
                                                                     match annoState.[index].Search.Body with
                                                                     |CompositeCell.Unitized (v,oa) ->
                                                                             prop.valueOrDefault v
-                                                                    | _ -> ()
+                                                                    |_ -> ()
                                                                 ]
                                                             ]
                                                         ]
                                                     ]
                                                 ]
+                                            else Html.none
 
                                     ]
                                 ]

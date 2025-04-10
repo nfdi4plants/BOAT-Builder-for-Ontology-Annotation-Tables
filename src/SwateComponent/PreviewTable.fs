@@ -23,7 +23,7 @@ module PreviewTable =
                                     Html.th [prop.text "Key";prop.className "border border-black text-black"]
                                     Html.th [prop.text "KeyType";prop.className "border border-black text-black"]
                                     Html.th [prop.text "Term";prop.className "border border-black text-black"]
-                                    Html.th [prop.text "Value (if unitized)";prop.className "border border-black text-black"]
+                                    Html.th [prop.text "Value (Unit)";prop.className "border border-black text-black"]
                                     Html.th [prop.text "";prop.className "border border-black text-black"]
                                 ]
                             ]

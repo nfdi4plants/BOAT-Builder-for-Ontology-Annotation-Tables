@@ -47,6 +47,7 @@ type PaperWithMarker =
           if CSS.highlights.Equals(null) then setwarningModal true
           else         
             CSS.highlights.clear()
+            //keys
             let rangesKey =
               markedNodes
               |> Array.ofSeq
@@ -104,7 +105,7 @@ type PaperWithMarker =
           Daisy.modalBox.div [
             Html.div [
               Html.p "Text highlighting is not compatible with your browser."
-              Html.span [
+              Html.a [
                   prop.text "View compatible browsers"
                   prop.href "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility"
                   prop.target.blank 

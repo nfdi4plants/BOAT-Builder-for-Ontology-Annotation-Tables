@@ -5,7 +5,25 @@ open Types
 open Fable.SimpleJson
 open System.Text.RegularExpressions
 open ARCtrl
+open Fable.Core.JsInterop
 
+module PDFjs =
+
+  importSideEffects "react-pdf/dist/Page/TextLayer.css"
+  importSideEffects "react-pdf/dist/Page/AnnotationLayer.css"
+  emitJsStatement () """import { pdfjs } from 'react-pdf';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();"""
+
+type ReactElements =
+  [<ReactComponent(import="Document", from="react-pdf")>]
+  static member Document (file: string, onLoadSuccess: {|numPages: int|} -> unit, children: ReactElement list, ?externalLinkTarget: string) = React.imported()
+
+  [<ReactComponent(import="Page", from="react-pdf")>]
+  static member Page (pageNumber: int, ?key: string) = React.imported()
 
 module private FileReaderHelper =
   open Fable.Core
@@ -31,23 +49,35 @@ module private FileReaderHelper =
       Browser.Dom.console.error ("Error reading file", e)
     reader.readAsArrayBuffer(file)
 
-  // let readPdf (file: Browser.Types.File) setState =
-  //   let src = URL.createObjectURL(file)
-  //   log ("Uploaded PDF:", src)
-  //   setState (PDF src)
+  let readPdf (file: Browser.Types.File) setState setLocalFile = //put pdf to html string converter
+    // let fileToString = Fable.Core.JS.JSON.stringify file
+    // let src = URL.createObjectURL(file)
+    // log ("Uploaded PDF:")
+    // log file
+    // log fileToString
+    // setState (PDF src)
+    // setLocalFile "file" (PDF fileToString)
+    let reader = newFileReader()
+    reader.onload <- fun e ->
+      let base64 = reader.result
+      setState (PDF (base64.ToString()))
+      setLocalFile "file" (PDF (base64.ToString()))
+
+    reader.readAsDataURL(file); // Converts to base64
 
   let readFromFile (file: Browser.Types.File) setState (fileType: UploadFileType) setLocalFile =
     match fileType with
     | UploadFileType.Docx -> readDocx file setState setLocalFile
-    // | UploadFileType.PDF -> readPdf file setState
+    | UploadFileType.PDF -> readPdf file setState setLocalFile
 
-module Highlight =
+module Lists =
 
   let keyList(annoList: Annotation list) = 
     [|
         for a in annoList do
           a.Search.Key.NameText
     |]
+
   let valuelist(annoList: Annotation list) = 
     [|
         for a in annoList do
@@ -56,13 +86,6 @@ module Highlight =
             | CompositeCell.Unitized (v,oa) -> oa.NameText
             |_ -> ()
     |]
-
-  // let allList (annoList: Annotation list) =
-  //   keyList(annoList) @ valuelist(annoList)
-
-      // List.fold (fun (acc: string) value -> 
-      //   acc.Replace(value, $"<mark>{value}</mark>")
-      // ) keyHighlighttext values
 
 
 type FileUpload =
@@ -74,36 +97,31 @@ type FileUpload =
       //       prop.id elementID        
       // ]
       Html.div [
-        Components.PaperWithMarker.Main(htmlString, Highlight.keyList(annoList), Highlight.valuelist(annoList), elementID)
+        Components.PaperWithMarker.Main(htmlString, Lists.keyList(annoList), Lists.valuelist(annoList), elementID)
       ]
 
 
-    /// https://stackoverflow.com/a/60539836/12858021
-    static member DisplayPDF(pdfSource: string, modalContext: DropdownModal) =
+  //  https://stackoverflow.com/a/60539836/12858021
+    static member DisplayPDF filehtml setNumPages (numPages: int option) pageNumber =
+      // let stringToFile: Browser.Types.File = Fable.Core.JS.JSON.parse filehtml |> unbox
+      // let src = URL.createObjectURL(filehtml)
       Html.div [
-        prop.className "prose lg:prose-lg"
-        prop.onContextMenu (fun e ->
-            let term = Browser.Dom.window.getSelection().ToString().Trim() 
-            if term.Length <> 0 then 
-                modalContext.setter {
-                    isActive = true;
-                    location = int e.pageX, int e.pageY
-                }
-                e.stopPropagation() 
-                e.preventDefault()
-            else 
-                ()
-        )
-        prop.children [
-          Html.embed [
-            prop.src pdfSource
-            prop.type' "application/pdf"
-            prop.style [
-              style.minHeight (length.perc 100)
-              style.width (length.perc 100)
-              style.height 600
-            ]
-          ]
+        ReactElements.Document(
+          filehtml, 
+          (fun (props: {|numPages: int|}) -> 
+            setNumPages (Some props.numPages)), 
+          [
+            for i in 1 .. numPages |> Option.defaultValue 1 do
+              ReactElements.Page(i, i.ToString())
+          ],
+          externalLinkTarget = "_blank"
+        ) 
+        Html.p [
+            prop.text (
+                match numPages with
+                | Some np -> ""
+                | None -> "Loading..."
+            )
         ]
       ]
 
@@ -113,7 +131,7 @@ type FileUpload =
         prop.onChange (fun (e: string) -> 
           match e with
           | "Docx" -> setUploadFileType(UploadFileType.Docx)
-          // | "PDF" -> setUploadFileType(UploadFileType.PDF)
+          | "PDF" -> setUploadFileType(UploadFileType.PDF)
           | _ -> ()
         )
         prop.children [
@@ -121,10 +139,10 @@ type FileUpload =
             prop.value "Docx"
             prop.text "Docx"
           ]
-          // Html.option [
-          //   prop.value "PDF"
-          //   prop.text "PDF"
-          // ]
+          Html.option [
+            prop.value "PDF"
+            prop.text "PDF"
+          ]
         ]
       ]
 

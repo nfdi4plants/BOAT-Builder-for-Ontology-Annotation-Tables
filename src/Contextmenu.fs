@@ -83,7 +83,7 @@ module private Functions =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = [Annotation.init(key =OntologyAnnotation(""), body = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)]
+            let newAnnoList = [Annotation.init(key =OntologyAnnotation(""), body = CompositeCell.Term(OntologyAnnotation(term)), height = yCoordinateOfSelection)]
 
             setState (List.append closedList newAnnoList)
         // let newAnnoList = Annotation.init(value = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)::state
@@ -113,7 +113,7 @@ module private Functions =
         let term = window.getSelection().ToString().Trim()
         if term.Length <> 0 then 
             let updatetedAnno = 
-                {state.[state.Length - 1] with Search.Body = CompositeCell.createFreeText(term)}
+                {state.[state.Length - 1] with Search.Body = CompositeCell.Term(OntologyAnnotation(term))}
 
             let newAnnoList =
                 state
