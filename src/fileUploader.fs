@@ -6,6 +6,7 @@ open Fable.SimpleJson
 open System.Text.RegularExpressions
 open ARCtrl
 open Fable.Core.JsInterop
+open Browser.Dom
 
 module PDFjs =
 
@@ -23,7 +24,7 @@ type ReactElements =
   static member Document (file: string, onLoadSuccess: {|numPages: int|} -> unit, children: ReactElement list, ?externalLinkTarget: string) = React.imported()
 
   [<ReactComponent(import="Page", from="react-pdf")>]
-  static member Page (pageNumber: int, ?key: string) = React.imported()
+  static member Page (pageNumber: int, width: int, ?key: string) = React.imported()
 
 module private FileReaderHelper =
   open Fable.Core
@@ -50,13 +51,7 @@ module private FileReaderHelper =
     reader.readAsArrayBuffer(file)
 
   let readPdf (file: Browser.Types.File) setState setLocalFile = //put pdf to html string converter
-    // let fileToString = Fable.Core.JS.JSON.stringify file
-    // let src = URL.createObjectURL(file)
-    // log ("Uploaded PDF:")
-    // log file
-    // log fileToString
-    // setState (PDF src)
-    // setLocalFile "file" (PDF fileToString)
+
     let reader = newFileReader()
     reader.onload <- fun e ->
       let base64 = reader.result
@@ -102,26 +97,31 @@ type FileUpload =
 
 
   //  https://stackoverflow.com/a/60539836/12858021
-    static member DisplayPDF filehtml setNumPages (numPages: int option) pageNumber =
-      // let stringToFile: Browser.Types.File = Fable.Core.JS.JSON.parse filehtml |> unbox
-      // let src = URL.createObjectURL(filehtml)
+    static member DisplayPDF filehtml setNumPages (numPages: int option) (elementID: string)  =
+
       Html.div [
-        ReactElements.Document(
-          filehtml, 
-          (fun (props: {|numPages: int|}) -> 
-            setNumPages (Some props.numPages)), 
-          [
-            for i in 1 .. numPages |> Option.defaultValue 1 do
-              ReactElements.Page(i, i.ToString())
-          ],
-          externalLinkTarget = "_blank"
-        ) 
-        Html.p [
-            prop.text (
-                match numPages with
-                | Some np -> ""
-                | None -> "Loading..."
-            )
+        prop.id elementID
+        prop.children [
+          ReactElements.Document(
+            filehtml, 
+            (fun (props: {|numPages: int|}) -> 
+              setNumPages (Some props.numPages)), 
+            [
+              for i in 1 .. numPages |> Option.defaultValue 1 do
+                ReactElements.Page(
+                  i, 
+                  750,
+                  i.ToString())
+            ],
+            externalLinkTarget = "_blank"
+          ) 
+          Html.p [
+              prop.text (
+                  match numPages with
+                  | Some np -> ""
+                  | None -> "Loading..."
+              )
+          ]
         ]
       ]
 
