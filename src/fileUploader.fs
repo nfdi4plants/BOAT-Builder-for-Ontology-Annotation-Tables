@@ -24,7 +24,7 @@ type ReactElements =
   static member Document (file: string, onLoadSuccess: {|numPages: int|} -> unit, children: ReactElement list, ?externalLinkTarget: string) = React.imported()
 
   [<ReactComponent(import="Page", from="react-pdf")>]
-  static member Page (pageNumber: int, width: int, ?key: string) = React.imported()
+  static member Page (pageNumber: int, width: int, customTextRenderer: 'a -> string, ?key: string) = React.imported()
 
 module private FileReaderHelper =
   open Fable.Core
@@ -57,6 +57,7 @@ module private FileReaderHelper =
       let base64 = reader.result
       setState (PDF (base64.ToString()))
       setLocalFile "file" (PDF (base64.ToString()))
+      log (base64.ToString())
 
     reader.readAsDataURL(file); // Converts to base64
 
@@ -97,8 +98,37 @@ type FileUpload =
 
 
   //  https://stackoverflow.com/a/60539836/12858021
-    static member DisplayPDF filehtml setNumPages (numPages: int option) (elementID: string)  =
+    static member DisplayPDF filehtml setNumPages (numPages: int option) (elementID: string) annoList  =
 
+      let highlightPatternKey(text: string, anno: string) = text.Replace(anno, sprintf "<mark style='background-color: #ffe699'>%s</mark>" anno)
+      // let highlightPatternTerm(text: string, anno: string) = text.Replace(anno, sprintf "<mark style='background-color: #4fb3d9'>%s</mark>" anno)
+  
+      // let searchText, setSearchText = React.useState ("")
+
+      // let textRenderer = 
+      //   for a in Lists.keyList annoList do
+      //     React.useCallback(
+      //       (fun text -> highlightPattern(text.ToString(), a)), [|a|]) 
+            
+      // // let onChange (event: Browser.Types.Event) =
+      // //   setSearchText(event.target?value)
+
+      let textRender = 
+        React.useCallback(
+          (fun text -> 
+            let mutable txt = text?str
+            for a in Lists.keyList annoList do
+              txt <- highlightPatternKey(txt, a)
+            txt
+            // for a in Lists.valuelist annoList do
+            //   txt <- highlightPatternKey(txt, a)
+            // txt
+
+          ),
+          [|box annoList|]
+        )
+        
+        
       Html.div [
         prop.id elementID
         prop.children [
@@ -111,6 +141,7 @@ type FileUpload =
                 ReactElements.Page(
                   i, 
                   750,
+                  textRender,
                   i.ToString())
             ],
             externalLinkTarget = "_blank"

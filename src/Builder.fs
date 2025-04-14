@@ -136,7 +136,7 @@ type Builder =
                     | Docx fileString ->
                       paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID))
                     | PDF fileString ->
-                      paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID)
+                      paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID annoState)
                 ]
               ]
             ]
