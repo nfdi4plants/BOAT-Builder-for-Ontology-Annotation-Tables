@@ -114,8 +114,8 @@ module Searchblock =
             ]
         ]
 
+open Components.FunctionsContextmenu
 
-    
 type Components =
     
     [<ReactComponent>]
@@ -178,6 +178,7 @@ type Components =
                                                   let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[index] |> not)  
                                                   // List.removeAt (List.filter (fun x -> x = a) state) state
                                                   setState newAnnoList
+
                                               )
                                               prop.children [
                                                     Html.span [

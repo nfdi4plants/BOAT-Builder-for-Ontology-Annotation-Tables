@@ -51,13 +51,11 @@ module private FileReaderHelper =
     reader.readAsArrayBuffer(file)
 
   let readPdf (file: Browser.Types.File) setState setLocalFile = //put pdf to html string converter
-
     let reader = newFileReader()
     reader.onload <- fun e ->
       let base64 = reader.result
       setState (PDF (base64.ToString()))
       setLocalFile "file" (PDF (base64.ToString()))
-      log (base64.ToString())
 
     reader.readAsDataURL(file); // Converts to base64
 
@@ -68,23 +66,19 @@ module private FileReaderHelper =
 
 module Lists =
 
-  let keyList(annoList: Annotation list) = 
-    [|
-        for a in annoList do
-          a.Search.Key.NameText
-    |]
+  let keyList (annoList: Annotation list)= 
+    annoList 
+    |> List.map (fun a -> a.HighlightKeys) //maps the key names to a list
+    |> List.toArray
     |> Array.filter (fun a -> a <> "") //filters out empty strings
+    
+     //filters out empty strings
 
-  let valuelist(annoList: Annotation list) = 
-    [|
-        for a in annoList do
-          match a.Search.Body with
-            | CompositeCell.Term oa -> oa.NameText
-            | CompositeCell.Unitized (v,oa) -> oa.NameText
-            |_ -> ()
-    |]
-    |> Array.filter (fun a -> a <> "") 
-
+  let valuelist (annoList: Annotation list) = 
+    annoList 
+    |> List.map (fun a -> a.HighlightTerms)
+    |> List.toArray
+    |> Array.filter (fun a -> a <> "")
 
 type FileUpload =
     static member DisplayHtml(htmlString: string, annoList: Annotation list, elementID: string) = 
@@ -95,7 +89,7 @@ type FileUpload =
       //       prop.id elementID        
       // ]
       Html.div [
-        Components.PaperWithMarker.Main(htmlString, Lists.keyList(annoList), Lists.valuelist(annoList), elementID)
+        PaperWithMarker.Main(htmlString, Lists.keyList annoList, Lists.valuelist annoList, elementID)
       ]
 
 
@@ -113,6 +107,7 @@ type FileUpload =
             let mutable txt = text?str
             for a in Lists.keyList annoList do
               txt <- highlightPattern(txt, a, "#ffe699")
+              log Lists.keyList
             for a in Lists.valuelist annoList do
               txt <- highlightPattern(txt, a, "#4fb3d9")
             txt
@@ -158,12 +153,12 @@ type FileUpload =
         )
         prop.children [
           Html.option [
-            prop.value "Docx"
-            prop.text "Docx"
-          ]
-          Html.option [
             prop.value "PDF"
             prop.text "PDF"
+          ]
+          Html.option [
+            prop.value "Docx"
+            prop.text "Docx"
           ]
         ]
       ]

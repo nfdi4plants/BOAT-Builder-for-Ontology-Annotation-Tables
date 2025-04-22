@@ -46,6 +46,7 @@ type Builder =
             Browser.Dom.window.addEventListener ("resize", turnOffContext)
             {new IDisposable with member this.Dispose() = window.removeEventListener ("resize", turnOffContext) }    
         )
+        
 
         let paper (width: string) (display: ReactElement) =
           Html.div [
@@ -71,7 +72,6 @@ type Builder =
                         e.preventDefault()
                     else 
                         () 
-                    log "Contextmenu"
                 )
                 prop.children [
                   Html.div [

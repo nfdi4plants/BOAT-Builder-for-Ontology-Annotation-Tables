@@ -5,6 +5,8 @@ open ARCtrl
 open Feliz.DaisyUI
 open Types
 
+open Components.FunctionsContextmenu
+
 module PreviewTable =
 
     let table (annoState: Annotation list, setState: Annotation list -> unit, toggleActive) =
@@ -62,8 +64,8 @@ module PreviewTable =
                                                     prop.onClick (fun _ -> 
                                                         let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[a] |> not)  
                                                         setState newAnnoList
-                                                        if newAnnoList = [] then toggleActive false
-                                                    )
+                                                       
+                                                            )
                                                     prop.children [
                                                         Html.i [
                                                             prop.className "fa-regular fa-trash-can cursor-pointer hover:text-error"
