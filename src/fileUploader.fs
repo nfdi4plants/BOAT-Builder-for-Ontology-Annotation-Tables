@@ -115,12 +115,10 @@ module private FileReaderHelper =
     let reader = newFileReader()
     reader.onload <- fun e ->
       let text = reader.result |> unbox<string>
-      log text
       let fileEnding = file.name.Split(".").[1]
       if fileEnding = "md" then 
         let prom = processMarkdown text
         prom.``then``(fun result ->
-          log result
           let markdownString = result?value
           setState (Txt markdownString)
           setLocalFile "file" (Txt markdownString) 
@@ -231,13 +229,11 @@ type FileUpload =
         prop.accept ".docx, .pdf, .txt, .md"
         prop.onChange (fun (f: Browser.Types.File) -> 
           let fileType =
-            let fileEnding = f.name.Split(".").[1] 
-            match fileEnding with
-            |"docx" -> UploadFileType.Docx
-            |"pdf" -> UploadFileType.PDF
-            |"txt" -> UploadFileType.Txt
-            |"md" -> UploadFileType.Txt
-            |_ -> UploadFileType.Txt
+            match f.``type`` with
+            |"application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> UploadFileType.Docx
+            |"application/pdf" -> UploadFileType.PDF
+            | _-> UploadFileType.Txt
+
           log fileType
           FileReaderHelper.readFromFile f setFilehtml fileType setLocalFile
           if ref.current.IsSome then
