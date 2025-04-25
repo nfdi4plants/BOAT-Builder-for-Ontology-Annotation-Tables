@@ -120,8 +120,10 @@ type Page =
 type UploadFileType =
   | Docx
   | PDF
+  | Txt
 
 type UploadedFile =
   | PDF of string
   | Docx of string
+  | Txt of string
   | Unset

@@ -7,6 +7,9 @@ open System.Text.RegularExpressions
 open ARCtrl
 open Fable.Core.JsInterop
 open Browser.Dom
+open Fable.Core
+
+open System.Threading.Tasks
 
 module PDFjs =
 
@@ -18,6 +21,42 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
   import.meta.url,
 ).toString();"""
+
+module RemarkImport =
+
+  [<Import("default", "rehype-raw")>]
+  let rehypeRaw: obj = jsNative
+  
+  [<Import("default", "rehype-stringify")>]
+  let rehypeStringify: obj = jsNative
+
+  [<Import("default", "remark-gfm")>]
+  let remarkGfm: obj = jsNative
+  
+  [<Import("default", "remark-parse")>]
+  let remarkParse: obj = jsNative
+
+  [<Import("default", "remark-rehype")>]
+  let remarkRehype: obj = jsNative
+
+  [<Import("unified", "unified")>]
+  let unified: unit -> obj  = jsNative
+
+
+  // let rehypeStringify: obj = importDefault "rehype-stringify"
+  // let remarkGfm: obj = importDefault "remark-gfm"
+  // let remarkParse: obj = importDefault "remark-parse"
+  // let remarkRehype: obj = importDefault "remark-rehype"
+  // let unified: obj -> unit = importMember "unified"
+
+// type Remark =
+
+//   static member rehypeRaw: obj = jsNative
+//   static member rehypeStringify: obj = jsNative
+//   static member remarkGfm: obj = jsNative
+//   static member remarkParse: obj = jsNative
+//   static member remarkRehype: obj = jsNative
+//   static member unified: unit -> unit = jsNative
 
 type ReactElements =
   [<ReactComponent(import="Document", from="react-pdf")>]
@@ -49,6 +88,50 @@ module private FileReaderHelper =
     reader.onerror <- fun e ->
       Browser.Dom.console.error ("Error reading file", e)
     reader.readAsArrayBuffer(file)
+ 
+
+  let inline usePlugin (plugin: obj) (instance: obj): obj = instance?``use``(plugin)
+  let inline usePluginWithOpts (plugin: obj) (opts: obj) (instance: obj): obj = instance?``use``(plugin, opts)
+
+  // Bind `process` properly via Emit
+  [<Emit("$0.process($1)")>]
+  let processUnified (processor: obj) (markdown: string) : JS.Promise<obj> = jsNative
+
+  let processMarkdown (markdown: string): JS.Promise<obj> =
+      let processor =
+          RemarkImport.unified()
+          |> usePlugin RemarkImport.remarkParse
+          |> usePlugin RemarkImport.remarkGfm
+          |> usePluginWithOpts RemarkImport.remarkRehype {| allowDangerousHtml = true |}
+          |> usePlugin RemarkImport.rehypeRaw
+          |> usePlugin RemarkImport.rehypeStringify
+
+      promise {
+          let! result = processUnified processor markdown
+          return result 
+      }
+
+  let readTxt (file: Browser.Types.File) setState setLocalFile = 
+    let reader = newFileReader()
+    reader.onload <- fun e ->
+      let text = reader.result |> unbox<string>
+      log text
+      let fileEnding = file.name.Split(".").[1]
+      if fileEnding = "md" then 
+        let prom = processMarkdown text
+        prom.``then``(fun result ->
+          log result
+          let markdownString = result?value
+          setState (Txt markdownString)
+          setLocalFile "file" (Txt markdownString) 
+        ) |> Promise.start
+      else 
+        setState (Txt (text.ToString()))
+        setLocalFile "file" (Txt (text.ToString()))
+
+    reader.onerror <- fun e ->
+      Browser.Dom.console.error ("Error reading file", e)
+    reader.readAsText(file)
 
   let readPdf (file: Browser.Types.File) setState setLocalFile = //put pdf to html string converter
     let reader = newFileReader()
@@ -63,6 +146,7 @@ module private FileReaderHelper =
     match fileType with
     | UploadFileType.Docx -> readDocx file setState setLocalFile
     | UploadFileType.PDF -> readPdf file setState setLocalFile
+    | UploadFileType.Txt -> readTxt file setState setLocalFile
 
 module Lists =
 
@@ -82,17 +166,11 @@ module Lists =
 
 type FileUpload =
     static member DisplayHtml(htmlString: string, annoList: Annotation list, elementID: string) = 
-      // Html.div [    
-      //       // prop.innerHtml (Highlight.highlightAnnos (htmlString, Highlight.keyList (annoList)))
-      //       prop.dangerouslySetInnerHTML htmlString
-      //       prop.className "prose bg-slate-100 p-3 text-black max-w-4xl"  
-      //       prop.id elementID        
-      // ]
       Html.div [
         PaperWithMarker.Main(htmlString, Lists.keyList annoList, Lists.valuelist annoList, elementID)
       ]
 
-
+    [<ReactComponent>]
   //  https://stackoverflow.com/a/60539836/12858021
     static member DisplayPDF filehtml setNumPages (numPages: int option) (elementID: string) annoList  =
 
@@ -122,13 +200,14 @@ type FileUpload =
             filehtml, 
             (fun (props: {|numPages: int|}) -> 
               setNumPages (Some props.numPages)), 
+            //virtualize this list
             [
               for i in 1 .. numPages |> Option.defaultValue 1 do
                 ReactElements.Page(
                   i, 
                   750,
                   textRender,
-                  i.ToString())
+                  "1")
             ],
             externalLinkTarget = "_blank"
           ) 
@@ -142,38 +221,31 @@ type FileUpload =
         ]
       ]
 
-    static member private FileTypeSelect (setUploadFileType) =
-      Html.select [
-        prop.className "select join-item w-min"
-        prop.onChange (fun (e: string) -> 
-          match e with
-          | "Docx" -> setUploadFileType(UploadFileType.Docx)
-          | "PDF" -> setUploadFileType(UploadFileType.PDF)
-          | _ -> ()
-        )
-        prop.children [
-          Html.option [
-            prop.value "PDF"
-            prop.text "PDF"
-          ]
-          Html.option [
-            prop.value "Docx"
-            prop.text "Docx"
-          ]
-        ]
-      ]
-
-    static member private FileInput (ref: IRefValue<Browser.Types.HTMLInputElement option>) filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName=
+    [<ReactComponent>]
+    static member private FileInput setState setFilehtml setLocalFile setFileName setLocalFileName=
+      let ref = React.useInputRef()
       Html.input [
         prop.className "file-input join-item"
         prop.ref ref
         prop.type'.file
+        prop.accept ".docx, .pdf, .txt, .md"
         prop.onChange (fun (f: Browser.Types.File) -> 
-          FileReaderHelper.readFromFile f setFilehtml uploadFileType setLocalFile
+          let fileType =
+            let fileEnding = f.name.Split(".").[1] 
+            match fileEnding with
+            |"docx" -> UploadFileType.Docx
+            |"pdf" -> UploadFileType.PDF
+            |"txt" -> UploadFileType.Txt
+            |"md" -> UploadFileType.Txt
+            |_ -> UploadFileType.Txt
+          log fileType
+          FileReaderHelper.readFromFile f setFilehtml fileType setLocalFile
           if ref.current.IsSome then
             ref.current.Value.value <- null
+
           setFileName f.name
           setLocalFileName "fileName" f.name
+          setState []
         )
       ]
 
@@ -184,7 +256,7 @@ type FileUpload =
           setFilehtml Unset
           setLocalFile "file" Unset
 
-          [] |> setState
+          setState []
 
           setFileName ""
           setLocalFileName "fileName" ""
@@ -204,21 +276,20 @@ type FileUpload =
     [<ReactComponent>]
     static member UploadDisplay(filehtml, setFilehtml, setState, setFileName, setLocalFileName) =
     
-        let uploadFileType, setUploadFileType = React.useState(UploadFileType.Docx)
+        // let uploadFileType, setUploadFileType = React.useState(UploadFileType.PDF)
 
         let setLocalFile (id: string) (nextFile: UploadedFile) =
             let JSONString = Json.stringify nextFile 
             Browser.WebStorage.localStorage.setItem(id, JSONString)
 
-        let ref = React.useInputRef()
         Html.div [
           prop.className "flex flex-col gap-2"
           prop.children [
             Html.div [
-              prop.className "join"
+              
               prop.children [
-                FileUpload.FileTypeSelect setUploadFileType
-                FileUpload.FileInput ref filehtml uploadFileType setUploadFileType setFilehtml setLocalFile setState setFileName setLocalFileName
+                // FileUpload.FileTypeSelect setUploadFileType
+                FileUpload.FileInput setState setFilehtml setLocalFile setFileName setLocalFileName
               ]
             ]
             match filehtml with

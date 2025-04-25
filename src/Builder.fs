@@ -30,7 +30,6 @@ type Builder =
         let (filehtml: UploadedFile), setFilehtml = React.useState(initialFile "file")
 
         let (numPages: int option), setNumPages = React.useState(None)
-        let pageNumber, setPageNumber = React.useState(1)
 
         let initialModal = {
             isActive = false
@@ -137,6 +136,8 @@ type Builder =
                       paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID))
                     | PDF fileString ->
                       paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID annoState)
+                    | Txt fileString ->
+                      paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID))
                 ]
               ]
             ]
