@@ -205,3 +205,4 @@ out
 .vs
 .ionide
 src/output
+dist/
