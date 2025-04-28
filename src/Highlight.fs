@@ -119,7 +119,6 @@ type PaperWithMarker =
                   prop.target.blank 
                   prop.className "underline text-blue-400"
               ]
-              
             ]
             Html.div [
               prop.className "flex items-center mt-5"
