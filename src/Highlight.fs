@@ -4,6 +4,7 @@ open Feliz
 open Fable.Core
 open Fable.Core.JsInterop
 open Feliz.DaisyUI
+open Fable.SimpleJson
 
 [<EmitConstructor; Global>]
 type Range() =
@@ -25,11 +26,18 @@ type CSS =
 type PaperWithMarker =
 
   [<ReactComponent>]
-  static member Main(htmlString: string, markedKeys: string [], markedValues: string [], elementID: string) =
+  static member Main(htmlString: string, markedKeys: string [], markedValues: string [], elementID: string, isLocalStorageClear) =
     let ref = React.useElementRef()
     let markedNodes, setMarkedNodes = React.useState(ResizeArray())
     let APIwarningModalState, setwarningModal = React.useState(false)
-    let hasClosed, setHasClosed = React.useState (false)
+
+    let setLocalFile (id: string) (nextFlag: bool) =
+            let JSONString = Json.stringify nextFlag 
+            Browser.WebStorage.localStorage.setItem(id, JSONString)
+    let initialWarning (id: string) =
+            if isLocalStorageClear id () = true then false
+            else Json.parseAs<bool> (Browser.WebStorage.localStorage.getItem id)  
+    let hasClosed, setHasClosed = React.useState (initialWarning "warningModal")
     
     React.useEffectOnce(fun _ -> 
       if ref.current.IsSome then
@@ -98,7 +106,7 @@ type PaperWithMarker =
     Html.div [
       Daisy.modal.dialog [
         prop.className [
-          if APIwarningModalState = true && not hasClosed then 
+          if APIwarningModalState = true && hasClosed = false then 
             "modal-open"
         ]
         prop.children [
@@ -110,6 +118,21 @@ type PaperWithMarker =
                   prop.href "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility"
                   prop.target.blank 
                   prop.className "underline text-blue-400"
+              ]
+              
+            ]
+            Html.div [
+              prop.className "flex items-center mt-5"
+              prop.children [
+                Html.p "Don't show this again"
+                Daisy.checkbox [
+                  prop.id "warningModal"
+                  // prop.checked hasClosed
+                  prop.className "ml-2"
+                  prop.onClick (fun _ -> 
+                    setLocalFile "warningModal" (not hasClosed)                
+                    )
+                ]
               ]
             ]
             Daisy.button.button [

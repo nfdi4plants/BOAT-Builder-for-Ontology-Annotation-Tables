@@ -133,11 +133,11 @@ type Builder =
                         ]
                       ] 
                     | Docx fileString ->
-                      paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID))
+                      paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
                     | PDF fileString ->
                       paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID annoState)
                     | Txt fileString ->
-                      paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID))
+                      paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
                 ]
               ]
             ]

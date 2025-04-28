@@ -163,9 +163,9 @@ module Lists =
     |> Array.filter (fun a -> a <> "")
 
 type FileUpload =
-    static member DisplayHtml(htmlString: string, annoList: Annotation list, elementID: string) = 
+    static member DisplayHtml(htmlString: string, annoList: Annotation list, elementID: string, isLocalStorageClear) = 
       Html.div [
-        PaperWithMarker.Main(htmlString, Lists.keyList annoList, Lists.valuelist annoList, elementID)
+        PaperWithMarker.Main(htmlString, Lists.keyList annoList, Lists.valuelist annoList, elementID, isLocalStorageClear)
       ]
 
     [<ReactComponent>]
