@@ -75,7 +75,8 @@ type Navbar =
           
 
     static member Main(setPage: Types.Page -> unit, statePage: Types.Page, annoState, setAnnoState, fileName) =
-        let logo = StaticFile.import "./img/DataPLANT_logo_bg_transparent.svg"
+        let logoDP = StaticFile.import "./img/DataPLANT_logo_bg_transparent.svg"
+        let logoGithub = StaticFile.import "./img/github-mark-white.png"
         let modalState, toggleState = React.useState(false)
         Daisy.navbar [
             prop.className "bg-base-300 shadow-lg p-0 sticky top-0 z-50"
@@ -88,10 +89,10 @@ type Navbar =
                         prop.href "https://www.nfdi4plants.de/"
                         prop.target.blank 
                         prop.children [
-                            Html.img [ prop.src logo; prop.height 70; prop.width 70]
+                            Html.img [ prop.src logoDP; prop.height 70; prop.width 70]
                         ]
                     ] 
-                    Html.div [ prop.text "BOAT - Builder for Ontology ARC Tables"; prop.className "font-semibold" ]
+                    Html.div [ prop.text "BOAT - Builder for Ontology ARC Tables(α)"; prop.className "font-semibold" ]
                   ]
                 ]
 
@@ -141,7 +142,7 @@ type Navbar =
                       prop.target.blank 
                       prop.children [
                           Html.img [ 
-                              prop.src "./img/github-mark-white.png"
+                              prop.src logoGithub
                               prop.className "p-1"
                               prop.height 40
                               prop.width 40

@@ -34,10 +34,13 @@ type PaperWithMarker =
     let setLocalFile (id: string) (nextFlag: bool) =
             let JSONString = Json.stringify nextFlag 
             Browser.WebStorage.localStorage.setItem(id, JSONString)
+
     let initialWarning (id: string) =
             if isLocalStorageClear id () = true then false
             else Json.parseAs<bool> (Browser.WebStorage.localStorage.getItem id)  
+
     let hasClosed, setHasClosed = React.useState (initialWarning "warningModal")
+    let warningFlag, setWarningFlag = React.useState(true)
     
     React.useEffectOnce(fun _ -> 
       if ref.current.IsSome then
@@ -128,16 +131,21 @@ type PaperWithMarker =
                   prop.id "warningModal"
                   // prop.checked hasClosed
                   prop.className "ml-2"
-                  prop.onClick (fun _ -> 
-                    setLocalFile "warningModal" (not hasClosed)                
+                  prop.onClick (fun _ ->
+                    setWarningFlag (not warningFlag) 
+                    setLocalFile "warningModal" warningFlag             
                     )
+                  
                 ]
               ]
             ]
             Daisy.button.button [
               prop.className "mt-5"
               prop.text "Got it"
-              prop.onClick (fun _ -> setHasClosed true)
+              prop.onClick (
+                fun _ -> 
+                setHasClosed (not hasClosed)
+                )
             ]
           ]
         ]

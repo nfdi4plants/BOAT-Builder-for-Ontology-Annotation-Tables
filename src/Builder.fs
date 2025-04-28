@@ -113,8 +113,13 @@ type Builder =
                   prop.className "w-1/5 px-2"
                   prop.children [
                       Html.h1 [
+                          prop.text "This is a test version. Feel free to explore around and write me issues (via Contact) if you find any bugs!"
+                          prop.className "mb-2 text-orange-500"
+
+                      ]
+                      Html.h1 [
                           prop.className "mb-2"
-                          prop.text "Navigation"
+                          prop.text "Select file here:"
                       ]
                       Html.div [
                           FileUpload.UploadDisplay(filehtml,setFilehtml, setState, setFileName, setLocalFileName)
