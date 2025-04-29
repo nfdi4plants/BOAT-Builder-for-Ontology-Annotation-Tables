@@ -6,6 +6,7 @@ open Browser.Types
 open Types
 open Fable.SimpleJson
 open Fable.Core.JS
+open Feliz.DaisyUI
 open System
 open ARCtrl
 open Fable.Core.JsInterop
@@ -46,6 +47,32 @@ type Builder =
             {new IDisposable with member this.Dispose() = window.removeEventListener ("resize", turnOffContext) }    
         )
         
+        let pleaceHolder =
+          Html.div [
+              prop.className "overflow-x-hidden h-full flex flex-row gap-2 w-full relative"
+              prop.children [
+                Html.div [
+                  prop.className "w-2/3 flex items-center justify-center"
+                  prop.children [
+                    Daisy.badge [
+                      prop.className ""
+                      badge.outline
+                      badge.lg
+                      badge.info
+                      prop.text "Upload a file!"
+                    ]
+                    // Html.div [prop.text "Upload a file!"; prop.className "text-[#4fb3d9]"]
+                  ]
+                ]
+                Html.div [
+                  prop.className "w-1/3"
+                  prop.children [
+                    Html.div [
+                    ]
+                  ]
+                ]
+              ]
+            ]
 
         let paper (width: string) (display: ReactElement) =
           Html.div [
@@ -86,17 +113,15 @@ type Builder =
               Html.div [
                 prop.className "w-1/3"
                 prop.children [
-                  if filehtml = Unset then
-                      Html.none
-                  else
-                      Html.div [
-                          prop.text "Annotations"
-                          prop.className "mb-2"
-                          // prop.className "mb-2 fixed bg-[#183641] z-50 top-20"
-                          prop.style [
-                            style.width.inheritFromParent
-                        ]
-                      ]
+                  
+                  Html.div [
+                      prop.text "Annotations"
+                      prop.className "mb-2"
+                      // prop.className "mb-2 fixed bg-[#183641] z-50 top-20"
+                      prop.style [
+                        style.width.inheritFromParent
+                    ]
+                  ]
                   for a in 0 .. annoState.Length - 1 do
                       App.Components.AnnoBlockwithSwate(annoState, setState, a)    
                 ]
@@ -110,20 +135,25 @@ type Builder =
           prop.onClick (fun e -> modalContext.setter initialModal)
           prop.children [
               Html.div [
-                  prop.className "w-1/5 px-2"
+                  if filehtml = Unset then prop.className "w-1/4 px-2"
+                  else prop.className "w-1/5 px-2"
                   prop.children [
-                      Html.h1 [
-                          prop.text "This is a test version. Feel free to explore around and write me issues (via Contact) if you find any bugs!"
-                          prop.className "mb-2 text-orange-500"
-
+                      Daisy.alert [
+                        alert.warning
+                        prop.className "justify-start"
+                        prop.children [
+                            Html.i [ prop.className "fas fa-exclamation-triangle mr-2" ]
+                            Html.label [ prop.text "This is a test version. Feel free to explore around and write me issues (via Contact) if you find any bugs!" ]
+                        ]
                       ]
                       Html.h1 [
-                          prop.className "mb-2"
+                          prop.className "my-2"
                           prop.text "Select file here:"
                       ]
                       Html.div [
                           FileUpload.UploadDisplay(filehtml,setFilehtml, setState, setFileName, setLocalFileName)
                       ]
+                      
                   ]
               ]
               Html.div [
@@ -131,12 +161,7 @@ type Builder =
                 prop.children [
                   match filehtml with
                     | Unset ->
-                      Html.div [
-                        prop.className "container mx-auto flex"
-                        prop.children [
-                          Html.p [prop.text "Upload a file!"; prop.className "text-[#4fb3d9]"]
-                        ]
-                      ] 
+                      pleaceHolder
                     | Docx fileString ->
                       paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
                     | PDF fileString ->

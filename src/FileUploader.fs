@@ -286,6 +286,10 @@ type FileUpload =
               prop.children [
                 // FileUpload.FileTypeSelect setUploadFileType
                 FileUpload.FileInput setState setFilehtml setLocalFile setFileName setLocalFileName
+                Html.h1 [
+                  prop.className "mt-2 text-gray-300"
+                  prop.text "compatible filetypes: .pdf | .docx | .md | .txt"
+                ]
               ]
             ]
             match filehtml with

@@ -128,6 +128,7 @@ type PaperWithMarker =
               prop.children [
                 Html.p "Don't show this again"
                 Daisy.checkbox [
+                  checkbox.sm
                   prop.id "warningModal"
                   // prop.checked hasClosed
                   prop.className "ml-2"
