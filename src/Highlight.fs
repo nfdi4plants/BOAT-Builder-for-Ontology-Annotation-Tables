@@ -26,7 +26,7 @@ type CSS =
 type PaperWithMarker =
 
   [<ReactComponent>]
-  static member Main(htmlString: string, markedKeys: string [], markedValues: string [], elementID: string, isLocalStorageClear) =
+  static member Main(htmlString: string, markedKeys: string [], markedTerms: string [], markedValues: string [], elementID: string, isLocalStorageClear) =
     let ref = React.useElementRef()
     let markedNodes, setMarkedNodes = React.useState(ResizeArray())
     let APIwarningModalState, setwarningModal = React.useState(false)
@@ -81,8 +81,31 @@ type PaperWithMarker =
               |> ResizeArray
             let highlightKeys = new Highlight(rangesKey)
             CSS.highlights.set "keyColor" highlightKeys; 
+            // terms
+            let rangesTerms=
+              markedNodes
+              |> Array.ofSeq
+              |> Array.map (fun n -> {|Node = n; Text = n.textContent.ToLower()|})
+              |> Array.collect (fun n ->
+                let indices: ResizeArray<int * int> = ResizeArray()
+                for phrase0 in markedTerms do 
+                  let phrase = phrase0.Trim().ToLower()
+                  let index = n.Text.IndexOf(phrase)
+                  if index > -1 then
+                    indices.Add(index, index + phrase.Length)
+                [|
+                  for startIndex, endIndex in indices do
+                    let range = new Range()
+                    range.setStart n.Node startIndex
+                    range.setEnd n.Node endIndex
+                    range
+                |]
+              )
+              |> ResizeArray
+            let highlightValues = new Highlight(rangesTerms)
+            CSS.highlights.set "termColor" highlightValues 
             // values
-            let rangesValues=
+            let rangesValue =
               markedNodes
               |> Array.ofSeq
               |> Array.map (fun n -> {|Node = n; Text = n.textContent.ToLower()|})
@@ -102,8 +125,8 @@ type PaperWithMarker =
                 |]
               )
               |> ResizeArray
-            let highlightValues = new Highlight(rangesValues)
-            CSS.highlights.set "valueColor" highlightValues 
+            let highlightKeys = new Highlight(rangesValue)
+            CSS.highlights.set "valueColor" highlightKeys; 
         )
     )
     Html.div [

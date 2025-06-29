@@ -34,6 +34,10 @@ html, body {
   background-color: #ffe699;
 }
 
-::highlight(valueColor) {
+::highlight(termColor) {
   background-color: #4fb3d9;
+}
+
+::highlight(valueColor) {
+  background-color: #4fd984;
 }

@@ -23,6 +23,8 @@ module Jsonkeys =
     let HighlightKeys = "highlightKeys"
     [<Literal>]
     let HighlightTerms = "highlightTerms"
+    [<Literal>]
+    let HighlightValues = "highlightValues"
  
     
 
@@ -34,6 +36,7 @@ let encoderAnno (anno: Annotation) = //encodes annotation to json
         Encode.tryInclude Jsonkeys.Height Encode.float (Some anno.Height)
         Encode.tryInclude Jsonkeys.HighlightKeys Encode.string (Some anno.HighlightKeys)
         Encode.tryInclude Jsonkeys.HighlightTerms Encode.string (Some anno.HighlightTerms)
+        Encode.tryInclude Jsonkeys.HighlightValues Encode.string (Some anno.HighlightValues)
     ]
     |> Encode.choose
     |> Encode.object
@@ -53,6 +56,7 @@ let decoderAnno : Decoder<Annotation list> = //decodes json to annotation
             Height = get.Required.Field Jsonkeys.Height Decode.float
             HighlightKeys = get.Required.Field Jsonkeys.HighlightKeys Decode.string
             HighlightTerms = get.Required.Field Jsonkeys.HighlightTerms Decode.string
+            HighlightValues = get.Required.Field Jsonkeys.HighlightValues Decode.string
             }
         )
     )

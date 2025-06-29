@@ -9,7 +9,7 @@ module BuildingBlock
     type DropdownPage =
     | Main
     | More
-    | IOTypes of CompositeHeaderDiscriminate
+    | IOTypes of Types.CompositeHeaderDiscriminate
 
         member this.toString =
             match this with

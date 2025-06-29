@@ -44,8 +44,10 @@ module private DropdownElements =
     let createSubBuildingBlockDropdownLink (state:BuildingBlockUIState) setState (subpage: DropdownPage) =
         Html.li [Html.button [
             prop.onClick(fun e ->
+                log $"DropdownPage: {subpage}"
                 e.preventDefault()
                 e.stopPropagation()
+                // setopen false
                 setState {state with DropdownPage = subpage}
             )
             prop.children [
@@ -103,45 +105,43 @@ module private DropdownElements =
             prop.text (headerType.ToString())
         ]]
 
-    // let createIOTypeDropdownItem setUiState close (headerType: CompositeHeaderDiscriminate)(iotype: IOType)  =
-    //     let setIO (iotype) =
-    //         { DropdownPage = DropdownPage.Main; DropdownIsActive = false } |> setUiState
-    //         close()
-    //         let nextState = {
-    //             model with
-    //                 HeaderCellType = headerType
-    //                 HeaderArg = Some (Fable.Core.U2.Case2 iotype)
-    //                 BodyArg = None
-    //                 BodyCellType = CompositeCellDiscriminate.Text
-    //         }
-    //         setModel nextState
-    //     Html.li [
-    //         match iotype with
-    //         | IOType.FreeText s ->
-    //             let onSubmit = fun (v: string) ->
-    //                 let header = IOType.FreeText v
-    //                 setIO header
-    //             prop.children [FreeTextInputElement onSubmit]
-    //         | _ ->
-    //             prop.onClick (fun e -> e.stopPropagation(); setIO iotype)
-    //             prop.onKeyDown(fun k -> if (int k.which) = 13 then setIO iotype)
-    //             prop.children [
-    //                 Html.div [prop.text (iotype.ToString())]
-    //             ]
-    //     ]
+    // let createIOTypeDropdownItem setUiState setopen (annoState: Annotation list)(setState: Annotation list -> unit)(a) header (iotype: IOType)  =
+        // let setIO (iotype: IOType) =
+        //     (annoState |> List.mapi (fun i e ->
+        //             if i = a then {e with Search.KeyType = header; Search.Key =  }
+        //             else e
+        //         )) |> setState
+        //     setopen false
+        //     { DropdownPage = DropdownPage.Main; DropdownIsActive = false } |> setUiState
+        // Html.li [
+        //     match iotype with
+        //     | IOType.FreeText s ->
+        //         let onSubmit = fun (v: string) ->
+        //             let header = IOType.FreeText v
+        //             setIO header
+        //         prop.children [FreeTextInputElement onSubmit]
+        //     | _ ->
+        //         prop.onClick (fun e -> e.stopPropagation(); setIO iotype)
+        //         prop.onKeyDown(fun k -> if (int k.which) = 13 then setIO iotype)
+        //         prop.children [
+        //             Html.div [prop.text (iotype.ToString())]
+        //         ]
+        // ]
 
     /// Main column types subpage for dropdown
     let dropdownContentMain state setState setopen (annoState: Annotation list)(setAnnoState: Annotation list -> unit)(a)=
             React.fragment [
                 // DropdownPage.IOTypes CompositeHeaderDiscriminate.Input |> createSubBuildingBlockDropdownLink state setState
-                // divider
+                CompositeHeaderDiscriminate.Input      |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
+                divider
                 CompositeHeaderDiscriminate.Parameter      |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
                 CompositeHeaderDiscriminate.Factor         |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
                 CompositeHeaderDiscriminate.Characteristic |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
                 CompositeHeaderDiscriminate.Component      |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
                 DropdownPage.More       |> createSubBuildingBlockDropdownLink state setState
-                // divider
+                divider
                 // DropdownPage.IOTypes CompositeHeaderDiscriminate.Output |> createSubBuildingBlockDropdownLink state setState
+                CompositeHeaderDiscriminate.Output    |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
                 DropdownContentInfoFooter setState false
             ]
 
@@ -161,14 +161,14 @@ module private DropdownElements =
             
         ]
 
-    /// Output columns subpage for dropdown
-    // let dropdownContentIOTypeColumns header setState close (model:BuildingBlock.Model) setModel  =
+    // / Output columns subpage for dropdown
+    // let dropdownContentIOTypeColumns setState setopen (annoState: Annotation list)(setAnnoState: Annotation list -> unit)(a) (header: Types.CompositeHeaderDiscriminate)  =
     //     React.fragment [
-    //         IOType.Source           |> createIOTypeDropdownItem setState close model setModel header   
-    //         IOType.Sample           |> createIOTypeDropdownItem setState close model setModel header 
-    //         IOType.Material         |> createIOTypeDropdownItem setState close model setModel header 
-    //         IOType.Data             |> createIOTypeDropdownItem setState close model setModel header 
-    //         IOType.FreeText ""      |> createIOTypeDropdownItem setState close model setModel header 
+    //         IOType.Source           |> createIOTypeDropdownItem setState setopen annoState setAnnoState a header
+    //         IOType.Sample           |> createIOTypeDropdownItem setState setopen annoState setAnnoState a header
+    //         IOType.Material         |> createIOTypeDropdownItem setState setopen annoState setAnnoState a header
+    //         IOType.Data             |> createIOTypeDropdownItem setState setopen annoState setAnnoState a header
+    //         IOType.FreeText ""      |> createIOTypeDropdownItem setState setopen annoState setAnnoState a header
     //         // Navigation element back to main page
     //         DropdownContentInfoFooter setState true
     //     ]
@@ -215,8 +215,8 @@ let Main(state:  BuildingBlock.BuildingBlockUIState, setState: BuildingBlock.Bui
                 DropdownElements.dropdownContentMain state setState setOpen annoState setAnnoState a 
             | DropdownPage.More ->
                 DropdownElements.dropdownContentProtocolTypeColumns state setState setOpen annoState setAnnoState a 
-            | DropdownPage.IOTypes iotype -> Html.none
-            //     DropdownElements.dropdownContentIOTypeColumns iotype setState close model setModel
+            | DropdownPage.IOTypes (iotype: Types.CompositeHeaderDiscriminate) -> Html.none
+                // DropdownElements.dropdownContentIOTypeColumns  setState setOpen annoState setAnnoState a iotype
         ],
         style=Components.Style.init("join-item dropdown text-white z-30", Map [
             "content", Components.Style.init("!min-w-64")

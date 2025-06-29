@@ -85,6 +85,7 @@ type View =
                                     fileName, 
                                     setFileName, 
                                     setLocalFileName
+                                    
                                   )
                                 |Types.Page.Contact -> Components.Contact.Main()
                                 |Types.Page.Help -> Components.Help.Main()

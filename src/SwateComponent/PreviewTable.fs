@@ -17,7 +17,7 @@ module PreviewTable =
                     prop.className "border-b border-black bg-white"
                     prop.children [
                         if annoState = [] then
-                            Html.head []
+                            Html.none
                         else
                             Html.thead [
                                 Html.tr [

@@ -76,7 +76,7 @@ module FunctionsContextmenu =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = [Annotation.init(OntologyAnnotation(term), body = CompositeCell.Term(OntologyAnnotation("")) ,highKey = term, highTerm = "", height = yCoordinateOfSelection)]
+            let newAnnoList = [Annotation.init(OntologyAnnotation(term), body = CompositeCell.Term(OntologyAnnotation("")) ,highKey = term, highTerm = "", highValue ="", height = yCoordinateOfSelection)]
 
             setState (List.append closedList newAnnoList)
             // let newAnnoList = Annotation.init(OntologyAnnotation(term), height = yCoordinateOfSelection)::state
@@ -90,6 +90,34 @@ module FunctionsContextmenu =
         Browser.Dom.window.getSelection().removeAllRanges()  
 
         
+    let addAnnotationBodyNew (state: Annotation list, setState: Annotation list -> unit, elementID: string) ()=  
+        let term = window.getSelection().ToString().Trim()      
+        let yCoordinateOfSelection  =
+            match window.getSelection() with
+            | (selection: Selection) when selection.rangeCount > 0 ->
+                let range = selection.getRangeAt(0)
+                let rect = range.getBoundingClientRect()
+                let relativeParent = document.getElementById(elementID).getBoundingClientRect()
+                rect.bottom - relativeParent.top + 12.0
+                
+            | _ -> 0.0     
+
+        if term.Length <> 0 then
+            let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
+            let newAnnoList = [Annotation.init(OntologyAnnotation(""), body = CompositeCell.Term(OntologyAnnotation(term)), highKey = "", highTerm = term, highValue = "", height = yCoordinateOfSelection)]
+
+
+            setState (List.append closedList newAnnoList)
+        // let newAnnoList = Annotation.init(value = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)::state
+        // setState newAnnoList
+            
+        else 
+            ()
+
+        log yCoordinateOfSelection
+
+        Browser.Dom.window.getSelection().removeAllRanges()   
+
     let addAnnotationValueNew (state: Annotation list, setState: Annotation list -> unit, elementID: string) ()=  
         let term = window.getSelection().ToString().Trim()      
         let yCoordinateOfSelection  =
@@ -104,7 +132,7 @@ module FunctionsContextmenu =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = [Annotation.init(OntologyAnnotation(""), body = CompositeCell.Term(OntologyAnnotation(term)), highKey = "", highTerm = term, height = yCoordinateOfSelection)]
+            let newAnnoList = [Annotation.init(OntologyAnnotation(""), body = CompositeCell.Unitized(term,OntologyAnnotation("")), highKey = "", highTerm = "", highValue = term,height = yCoordinateOfSelection)]
 
 
             setState (List.append closedList newAnnoList)
@@ -132,17 +160,41 @@ module FunctionsContextmenu =
 
             setState newAnnoList
 
-    let addToLastAnnoAsValue(state: Annotation list, setState: Annotation list -> unit) () =
+    let addToLastAnnoAsBody(state: Annotation list, setState: Annotation list -> unit) () =
         let term = window.getSelection().ToString().Trim()
         if term.Length <> 0 then 
-            let updatetedAnno = 
-                {state.[state.Length - 1] with Search.Body = CompositeCell.Term(OntologyAnnotation(term)); HighlightTerms = term}
+            let updatetedAnno =
+                match state.[state.Length - 1].Search.Body with
+                | CompositeCell.Unitized (v, oa) ->
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(v, OntologyAnnotation(term)); HighlightTerms = term; HighlightValues = v }
+                | _ ->
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Term(OntologyAnnotation(term)); HighlightTerms = term}
 
             let newAnnoList =
                 state
                 |> List.mapi (fun i elem -> if i = state.Length - 1 then updatetedAnno else elem)
 
             setState newAnnoList
+
+    let addToLastAnnoAsValue(state: Annotation list, setState: Annotation list -> unit) () =
+        let term = window.getSelection().ToString().Trim()
+        if term.Length <> 0 then 
+            let updatetedAnno = 
+                match state.[state.Length - 1].Search.Body with
+                | CompositeCell.Term oa ->
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term, OntologyAnnotation(oa.NameText)); HighlightTerms = oa.NameText; HighlightValues = term }
+                | CompositeCell.Unitized (v, oa) ->
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term, OntologyAnnotation(oa.NameText)); HighlightTerms = oa.NameText; HighlightValues = term }
+                | _ ->
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term, OntologyAnnotation("")); HighlightValues = term }
+                // {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term,OntologyAnnotation(state.[state.Length - 1].Search.Body.ToString())); HighlightTerms = term}
+
+            let newAnnoList =
+                state
+                |> List.mapi (fun i elem -> if i = state.Length - 1 then updatetedAnno else elem)
+
+            setState newAnnoList
+
 
 open Helper
 
@@ -152,15 +204,21 @@ module Contextmenu =
     let private contextmenu (mousex: float, mousey: float) (resetter: unit -> unit, state: Annotation list, setState: Annotation list -> unit, elementID:string)=
         /// This element will remove the contextmenu when clicking anywhere else
         let buttonList = [
-            button ("Add as new Key", resetter, state, addAnnotationKeyNew(state, setState, elementID ), [])
-            button ("Add as new Term", resetter,state, addAnnotationValueNew(state, setState,elementID), []) 
+            Html.div [ 
+                prop.className "text-gray-500 text-sm p-1"
+                prop.text "Add as new .."
+            ]
+            button ("Key", resetter, state, addAnnotationKeyNew(state, setState, elementID ), [])
+            button ("Term", resetter,state, addAnnotationBodyNew(state, setState,elementID), []) 
+            button ("Value", resetter,state, addAnnotationValueNew(state, setState,elementID), [])
             divider
             Html.div [ 
                 prop.className "text-gray-500 text-sm p-1"
                 prop.text "Add to last annotation .."
             ]
             button ("as Key", resetter,state, addToLastAnnoAsKey(state, setState),  [])
-            button ("as Term", resetter,state, addToLastAnnoAsValue(state, setState),  [])
+            button ("as Term", resetter,state, addToLastAnnoAsBody(state, setState),  [])
+            button ("as Value", resetter,state, addToLastAnnoAsValue(state, setState),  [])
         ]
         Html.div [
             prop.tabIndex 0

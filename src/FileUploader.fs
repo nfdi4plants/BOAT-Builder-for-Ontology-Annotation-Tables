@@ -156,16 +156,22 @@ module Lists =
     
      //filters out empty strings
 
-  let valuelist (annoList: Annotation list) = 
+  let termlist (annoList: Annotation list) = 
     annoList 
     |> List.map (fun a -> a.HighlightTerms)
+    |> List.toArray
+    |> Array.filter (fun a -> a <> "")
+
+  let valuelist (annoList: Annotation list) =
+    annoList
+    |> List.map (fun a -> a.HighlightValues)
     |> List.toArray
     |> Array.filter (fun a -> a <> "")
 
 type FileUpload =
     static member DisplayHtml(htmlString: string, annoList: Annotation list, elementID: string, isLocalStorageClear) = 
       Html.div [
-        PaperWithMarker.Main(htmlString, Lists.keyList annoList, Lists.valuelist annoList, elementID, isLocalStorageClear)
+        PaperWithMarker.Main(htmlString, Lists.keyList annoList, Lists.termlist annoList, Lists.valuelist annoList, elementID, isLocalStorageClear)
       ]
 
     [<ReactComponent>]

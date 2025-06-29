@@ -6,10 +6,16 @@ open Feliz.DaisyUI
 type Navbar =
 
     static member AnnotationModal (isActive: bool, toggleActive: bool -> unit, annoState, setAnnoState) = 
+        // Modal for displaying annotations
+      if annoState = [] then
+        Html.none
+      else
       Daisy.modal.dialog [
           prop.className [
             if isActive then "modal-open"
+            // else "modal-close"
           ]
+          // if annoState = [] then toggleActive(false)
           prop.children [
             Daisy.modalBox.div [
               prop.className "p-0"

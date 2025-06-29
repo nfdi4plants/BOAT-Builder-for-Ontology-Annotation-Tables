@@ -29,6 +29,8 @@ with
         | Characteristic
         | Factor
         | Parameter
+        | Input
+        | Output
         | ProtocolType -> true
         | _ -> false
     member this.HasOA() =
@@ -78,9 +80,10 @@ type Annotation =
     Height: float
     HighlightKeys: string
     HighlightTerms: string
+    HighlightValues: string
     } 
 
-    static member init (key, body , highKey, highTerm, ?keyType, ?isOpen,  ?search, ?height ) = 
+    static member init (key, body , highKey, highTerm, highValue, ?keyType, ?isOpen,  ?search, ?height ) = 
         let isOpen = defaultArg isOpen true
         let keyType = defaultArg keyType CompositeHeaderDiscriminate.Parameter
         let search = defaultArg search {
@@ -95,6 +98,7 @@ type Annotation =
             Height= height
             HighlightKeys = highKey
             HighlightTerms = highTerm
+            HighlightValues = highValue
 
         }
     member this.ToggleOpen () = {this with IsOpen = not this.IsOpen}
