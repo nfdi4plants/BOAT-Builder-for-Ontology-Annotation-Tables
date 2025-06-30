@@ -198,6 +198,7 @@ type FileUpload =
         )
 
       Html.div [
+        prop.className "mt-5"
         prop.id elementID
         prop.children [
           ReactElements.Document(

@@ -206,7 +206,7 @@ module Contextmenu =
         let buttonList = [
             Html.div [ 
                 prop.className "text-gray-500 text-sm p-1"
-                prop.text "Add as new .."
+                prop.text "Add new annotation as .."
             ]
             button ("Key", resetter, state, addAnnotationKeyNew(state, setState, elementID ), [])
             button ("Term", resetter,state, addAnnotationBodyNew(state, setState,elementID), []) 
