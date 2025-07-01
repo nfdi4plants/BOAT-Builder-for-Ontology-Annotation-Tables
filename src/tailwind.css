@@ -3,21 +3,21 @@
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark;
 }
-@plugin "daisyui/theme" {
+/* @plugin "daisyui/theme" {
   name: "light";
   default: true;
   --color-primary: #1FC2A7;
   --color-secondary: #2D3E50;
   --color-accent: #B4CE82
-}
+} */
 
-@plugin "daisyui/theme" {
-  name: "dark";
+/* @plugin "daisyui/theme" {
+  name: "light";
   default: true;
   --color-primary: #1FC2A7;
   --color-secondary: #2D3E50;
   --color-accent: #B4CE82
-}
+} */
 
 
 html, body {
