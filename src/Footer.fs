@@ -12,7 +12,7 @@ type Footer =
                     prop.className "flex justify-center"
                     prop.children [
                         Html.span [
-                            prop.text "This is a footer. By"
+                            prop.text "BOAT is part of"
                         ]
                         Html.a [
                             prop.text "ndfdi4plants"
