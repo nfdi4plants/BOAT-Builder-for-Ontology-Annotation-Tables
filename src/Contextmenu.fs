@@ -214,11 +214,11 @@ module Contextmenu =
             divider
             Html.div [ 
                 prop.className "text-gray-500 text-sm p-1"
-                prop.text "Add to last annotation .."
+                prop.text "Add to last annotation as .."
             ]
-            button ("as Key", resetter,state, addToLastAnnoAsKey(state, setState),  [])
-            button ("as Term", resetter,state, addToLastAnnoAsBody(state, setState),  [])
-            button ("as Value", resetter,state, addToLastAnnoAsValue(state, setState),  [])
+            button ("Key", resetter,state, addToLastAnnoAsKey(state, setState),  [])
+            button ("Term", resetter,state, addToLastAnnoAsBody(state, setState),  [])
+            button ("Value", resetter,state, addToLastAnnoAsValue(state, setState),  [])
         ]
         Html.div [
             prop.tabIndex 0

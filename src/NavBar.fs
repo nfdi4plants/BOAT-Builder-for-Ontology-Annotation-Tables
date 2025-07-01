@@ -98,7 +98,7 @@ type Navbar =
                             Html.img [ prop.src logoDP; prop.height 70; prop.width 70]
                         ]
                     ] 
-                    Html.div [ prop.text "BOAT - Builder for Ontology Annotation Tables(α)"; prop.className "font-semibold" ]
+                    Html.div [ prop.text "BOAT - Builder for Ontology Annotation Tables"; prop.className "font-semibold" ]
                   ]
                 ]
 
