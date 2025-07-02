@@ -32,17 +32,17 @@ module PreviewTable =
                         Html.tbody [
                         for a in 0 .. annoState.Length - 1 do
                         
-                            let isBodyempty = 
-                                match annoState[a].Search.Body with
-                                | CompositeCell.Term oa -> System.String.IsNullOrWhiteSpace oa.NameText
-                                | CompositeCell.Unitized (v,oa) -> System.String.IsNullOrWhiteSpace v
-                                | _ -> true
+                            // let isBodyempty = 
+                            //     match annoState[a].Search.Body with
+                            //     | CompositeCell.Term oa -> System.String.IsNullOrWhiteSpace oa.NameText
+                            //     | CompositeCell.Unitized (v,oa) -> System.String.IsNullOrWhiteSpace v
+                            //     | _ -> true
                                 
-                            let isKeyempty = System.String.IsNullOrWhiteSpace annoState[a].Search.Key.NameText
+                            // let isKeyempty = System.String.IsNullOrWhiteSpace annoState[a].Search.Key.NameText
 
-                            if isBodyempty && isKeyempty  then
-                                Html.tr []
-                            else
+                            // if isBodyempty && isKeyempty  then
+                            //     Html.tr []
+                            // else
                                 Html.tr [
                                     prop.children [
                                         Html.td [prop.text(a + 1); prop.className "border border-black text-black"]

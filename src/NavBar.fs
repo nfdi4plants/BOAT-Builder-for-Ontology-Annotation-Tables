@@ -7,15 +7,13 @@ type Navbar =
 
     static member AnnotationModal (isActive: bool, toggleActive: bool -> unit, annoState, setAnnoState) = 
         // Modal for displaying annotations
-      if annoState = [] then
-        Html.none
-      else
+
       Daisy.modal.dialog [
+          if annoState = [] && isActive = true then toggleActive(false)
           prop.className [
-            if isActive then "modal-open"
-            // else "modal-close"
-          ]
-          // if annoState = [] then toggleActive(false)
+            if isActive then "modal-open z-50"
+            else "modal-close"
+          ]          
           prop.children [
             Daisy.modalBox.div [
               prop.className "p-0"
@@ -27,6 +25,7 @@ type Navbar =
                       prop.className "btn btn-sm btn-circle absolute right-2 top-2 z-50 h-5 w-5"
                       prop.text "✕"
                       prop.onClick (fun _ -> toggleActive(false))
+                      
                     ]
                   ]
                 ]
