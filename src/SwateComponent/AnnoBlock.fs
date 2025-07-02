@@ -204,7 +204,7 @@ type Components =
                                                             
                                                             prop.children [
                                                                 Html.input [
-                                                                    prop.className "grow text-white"
+                                                                    prop.className "grow text-black"
                                                                     prop.placeholder "Value..."
                                                                     prop.onChange (fun (s:string) ->
                                                                         Helperfuncs.updateAnnotation((fun anno -> 

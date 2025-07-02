@@ -357,7 +357,7 @@ type TermSearch =
                         prop.children [
                             Components.searchIcon
                             Html.input [
-                                prop.className "grow"
+                                prop.className "grow text-black"
                                 prop.autoFocus autofocus
                                 if input.IsSome then prop.valueOrDefault input.Value.NameText
                                 prop.ref inputRef
