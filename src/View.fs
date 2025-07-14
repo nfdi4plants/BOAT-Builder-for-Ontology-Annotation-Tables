@@ -25,11 +25,12 @@ type View =
 
         let setLocalStorageAnnotation (id: string)(nextAnnos: Annotation list) =
             let JSONstring= 
-                // Json.stringify nextAnnos 
+               
                 nextAnnos |> List.map encoderAnno |> Encode.list |> Encode.toJsonString 0
 
             // log JSONstring
             Browser.WebStorage.localStorage.setItem(id, JSONstring)
+            log JSONstring
 
         let setState(state: Annotation list) =
             setAnnotationState state

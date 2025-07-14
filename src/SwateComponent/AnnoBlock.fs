@@ -69,7 +69,12 @@ module Searchblock =
                     prop.children [
                         // Choose building block type dropdown element
                         // Dropdown building block type choice
-                        BuildingBlock.Dropdown.Main(ui, setUi, annoState, setAnnoState, a)
+                        let setKeyType (cHDOpt: CompositeHeaderDiscriminate option) =
+                            let cHD = cHDOpt |> Option.defaultValue CompositeHeaderDiscriminate.Parameter
+                            Helperfuncs.updateAnnotation((fun anno -> 
+                                {anno with Search.KeyType = cHD }
+                            ), a, annoState, setAnnoState)
+                        BuildingBlock.Dropdown.Main(ui, setUi, annoState, setKeyType, a)
                         // Term search field
                         // if model.HeaderCellType.HasOA() then
                         let setter (oaOpt: OntologyAnnotation option) =

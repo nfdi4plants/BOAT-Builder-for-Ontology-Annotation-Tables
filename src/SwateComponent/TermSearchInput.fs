@@ -147,7 +147,7 @@ module TermSearchAux =
                     if not loading then "invisible";
                 ]
             ]
-        let searchIcon = Html.i [prop.className "fa-solid fa-magnifying-glass"]
+        let searchIcon = Html.i [prop.className "fa-solid fa-magnifying-glass text-black"]
         let verifiedIcon = Html.i [prop.className "fa-solid fa-check text-primary"]
         let termSelectItemMain (term: Term, show, setShow, setTerm, isDirectedSearchResult: bool) =
             Html.div [

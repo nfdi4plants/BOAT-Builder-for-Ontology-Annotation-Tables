@@ -14,6 +14,8 @@ module Jsonkeys =
     [<Literal>]
     let Key = "key"
     [<Literal>]
+    let KeyType = "KeyType"
+    [<Literal>]
     let Body = "Body"
     [<Literal>]
     let IsOpen = "isOpen"
@@ -31,6 +33,23 @@ module Jsonkeys =
 let encoderAnno (anno: Annotation) = //encodes annotation to json         
     [
         Encode.tryInclude Jsonkeys.Key OntologyAnnotation.encoder (Some anno.Search.Key)
+        Encode.tryInclude Jsonkeys.KeyType Encode.string (
+             match anno.Search.KeyType with
+                | CompositeHeaderDiscriminate.Input ->  Some "Input"
+                | CompositeHeaderDiscriminate.Output -> Some "Output"
+                | CompositeHeaderDiscriminate.Parameter -> Some "Parameter"
+                | CompositeHeaderDiscriminate.Component -> Some "Component"
+                | CompositeHeaderDiscriminate.Characteristic -> Some "Characteristic"
+                | CompositeHeaderDiscriminate.Factor -> Some "Factor"
+                | CompositeHeaderDiscriminate.Date -> Some "Date"
+                | CompositeHeaderDiscriminate.Performer -> Some "Performer"
+                | CompositeHeaderDiscriminate.ProtocolDescription -> Some "ProtocolDescription"
+                | CompositeHeaderDiscriminate.ProtocolType -> Some "ProtocolType"
+                | CompositeHeaderDiscriminate.ProtocolUri -> Some "ProtocolUri"
+                | CompositeHeaderDiscriminate.ProtocolVersion -> Some "ProtocolVersion"
+                | _ -> Some "freetext" //default case for ProtocolREF
+
+        )
         Encode.tryInclude Jsonkeys.Body CompositeCell.encoder (Some anno.Search.Body)
         Encode.tryInclude Jsonkeys.IsOpen Encode.bool (Some anno.IsOpen)
         Encode.tryInclude Jsonkeys.Height Encode.float (Some anno.Height)
@@ -42,7 +61,14 @@ let encoderAnno (anno: Annotation) = //encodes annotation to json
     |> Encode.object
 
 
-
+let keyType: Decoder<CompositeHeaderDiscriminate> =
+    { new Decoder<CompositeHeaderDiscriminate> with
+        member _.Decode(helpers, value) =
+            if helpers.isString value then
+                Ok(helpers.asString value |> CompositeHeaderDiscriminate.fromString)
+            else
+                ("", BadPrimitive("a composite header", value)) |> Error
+    }
 let decoderAnno : Decoder<Annotation list> = //decodes json to annotation  
     Decode.list (
         Decode.object (fun get ->
@@ -50,7 +76,10 @@ let decoderAnno : Decoder<Annotation list> = //decodes json to annotation
             IsOpen = get.Required.Field Jsonkeys.IsOpen Decode.bool
             Search = {
                 Key = get.Required.Field  Jsonkeys.Key OntologyAnnotation.decoder
-                KeyType =  CompositeHeaderDiscriminate.Parameter
+                KeyType = get.Required.Field 
+                    Jsonkeys.KeyType
+                    keyType
+
                 Body = get.Required.Field  Jsonkeys.Body CompositeCell.decoder
                 }
             Height = get.Required.Field Jsonkeys.Height Decode.float

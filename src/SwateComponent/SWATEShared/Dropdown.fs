@@ -88,15 +88,16 @@ module private DropdownElements =
         (hct1.IsTermColumn() = hct2.IsTermColumn())
         && (hct1.HasIOType() = hct2.HasIOType())
 
-    let createBuildingBlockDropdownItem setUiState setopen (annoState: Annotation list)(setState: Annotation list -> unit)(a)(headerType: CompositeHeaderDiscriminate)  =
+    let createBuildingBlockDropdownItem setUiState setopen (annoState: Annotation list)(setState:CompositeHeaderDiscriminate option -> unit)(a)(headerType: CompositeHeaderDiscriminate)  =
         Html.li [Html.button [
             prop.onClick (fun (e: Browser.Types.MouseEvent) ->
                 e.stopPropagation()
                 e.preventDefault()
-                (annoState |> List.mapi (fun i e ->
-                    if i = a then {e with Search.KeyType = headerType}
-                    else e
-                )) |> setState
+                // (annoState |> List.mapi (fun i e ->
+                //     if i = a then {e with Search.KeyType = headerType}
+                //     else e
+                // )) |> setState
+                setState (Some headerType)
                 setopen false
                 { DropdownPage = DropdownPage.Main; DropdownIsActive = false }|> setUiState
             
@@ -129,35 +130,35 @@ module private DropdownElements =
         // ]
 
     /// Main column types subpage for dropdown
-    let dropdownContentMain state setState setopen (annoState: Annotation list)(setAnnoState: Annotation list -> unit)(a)=
+    let dropdownContentMain state setUi setopen (annoState: Annotation list) (setAnnoState:CompositeHeaderDiscriminate option -> unit) (a)=
             React.fragment [
                 // DropdownPage.IOTypes CompositeHeaderDiscriminate.Input |> createSubBuildingBlockDropdownLink state setState
-                CompositeHeaderDiscriminate.Input      |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
+                CompositeHeaderDiscriminate.Input      |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
                 divider
-                CompositeHeaderDiscriminate.Parameter      |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-                CompositeHeaderDiscriminate.Factor         |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-                CompositeHeaderDiscriminate.Characteristic |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-                CompositeHeaderDiscriminate.Component      |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-                DropdownPage.More       |> createSubBuildingBlockDropdownLink state setState
+                CompositeHeaderDiscriminate.Parameter      |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+                CompositeHeaderDiscriminate.Factor         |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+                CompositeHeaderDiscriminate.Characteristic |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+                CompositeHeaderDiscriminate.Component      |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+                DropdownPage.More       |> createSubBuildingBlockDropdownLink state setUi
                 divider
                 // DropdownPage.IOTypes CompositeHeaderDiscriminate.Output |> createSubBuildingBlockDropdownLink state setState
-                CompositeHeaderDiscriminate.Output    |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-                DropdownContentInfoFooter setState false
+                CompositeHeaderDiscriminate.Output    |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+                DropdownContentInfoFooter setUi false
             ]
 
         
 
     /// Protocol Type subpage for dropdown
-    let dropdownContentProtocolTypeColumns state setState setopen (annoState: Annotation list)(setAnnoState: Annotation list -> unit)(a) =
+    let dropdownContentProtocolTypeColumns state setUi setopen (annoState: Annotation list)(setAnnoState:CompositeHeaderDiscriminate option -> unit)(a) =
         React.fragment [
-            CompositeHeaderDiscriminate.Date                |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-            CompositeHeaderDiscriminate.Performer           |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-            CompositeHeaderDiscriminate.ProtocolDescription |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-            CompositeHeaderDiscriminate.ProtocolType        |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-            CompositeHeaderDiscriminate.ProtocolUri         |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
-            CompositeHeaderDiscriminate.ProtocolVersion     |> createBuildingBlockDropdownItem setState setopen annoState setAnnoState a
+            CompositeHeaderDiscriminate.Date                |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+            CompositeHeaderDiscriminate.Performer           |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+            CompositeHeaderDiscriminate.ProtocolDescription |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+            CompositeHeaderDiscriminate.ProtocolType        |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+            CompositeHeaderDiscriminate.ProtocolUri         |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
+            CompositeHeaderDiscriminate.ProtocolVersion     |> createBuildingBlockDropdownItem setUi setopen annoState setAnnoState a
             // Navigation element back to main page
-            DropdownContentInfoFooter setState true
+            DropdownContentInfoFooter setUi true
             
         ]
 
@@ -174,9 +175,9 @@ module private DropdownElements =
     //     ]
 
 [<ReactComponent>]
-let Main(state:  BuildingBlock.BuildingBlockUIState, setState: BuildingBlock.BuildingBlockUIState -> unit, annoState: Annotation list, setAnnoState, a) =
+let Main(state:  BuildingBlock.BuildingBlockUIState, setUi: BuildingBlock.BuildingBlockUIState -> unit, annoState: Annotation list, setAnnoState: CompositeHeaderDiscriminate option -> unit, a) =
     let isOpen, setOpen = React.useState false
-    let updateDropdown = fun b -> setState {state with DropdownIsActive = b}
+    let updateDropdown = fun b -> setUi {state with DropdownIsActive = b}
     let close = fun _ -> updateDropdown false
     let dropdownRef:IRefValue<Browser.Types.HTMLElement option> = React.useRef(None)
 
@@ -212,13 +213,13 @@ let Main(state:  BuildingBlock.BuildingBlockUIState, setState: BuildingBlock.Bui
         [
             match state.DropdownPage with
             | DropdownPage.Main ->
-                DropdownElements.dropdownContentMain state setState setOpen annoState setAnnoState a 
+                DropdownElements.dropdownContentMain state setUi setOpen annoState setAnnoState a 
             | DropdownPage.More ->
-                DropdownElements.dropdownContentProtocolTypeColumns state setState setOpen annoState setAnnoState a 
+                DropdownElements.dropdownContentProtocolTypeColumns state setUi setOpen annoState setAnnoState a 
             | DropdownPage.IOTypes (iotype: Types.CompositeHeaderDiscriminate) -> Html.none
                 // DropdownElements.dropdownContentIOTypeColumns  setState setOpen annoState setAnnoState a iotype
         ],
-        style=Components.Style.init("join-item dropdown text-white z-30", Map [
+        style=Components.Style.init("join-item dropdown text-black z-30", Map [
             "content", Components.Style.init("!min-w-64")
         ])
     )
