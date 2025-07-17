@@ -102,11 +102,7 @@ type Builder =
                 prop.children [
                   Html.div [
                       prop.text fileName
-                      // prop.className "mb-2"
-                      prop.className "mb-2 pt-5 fixed bg-[#a5e7dc] z-30 top-16"
-                      prop.style [
-                          style.width.inheritFromParent
-                      ]
+                      prop.className "mb-2 pt-5 fixed bg-[#a5e7dc] z-30 top-16 w-2/3"
                   ]
                   display
                 ]
@@ -117,8 +113,7 @@ type Builder =
                   
                   Html.div [
                       prop.text "Annotations"
-                      // prop.className "mb-2"
-                      prop.className "mb-2 mb-2 pt-5 fixed bg-[#a5e7dc] z-30 top-16"
+                      prop.className "mb-2 pt-5 fixed bg-[#a5e7dc] z-30 top-16"
                       prop.style [
                         style.width.inheritFromParent
                     ]

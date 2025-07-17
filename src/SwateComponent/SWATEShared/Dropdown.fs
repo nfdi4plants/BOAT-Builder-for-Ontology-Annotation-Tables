@@ -219,7 +219,7 @@ let Main(state:  BuildingBlock.BuildingBlockUIState, setUi: BuildingBlock.Buildi
             | DropdownPage.IOTypes (iotype: Types.CompositeHeaderDiscriminate) -> Html.none
                 // DropdownElements.dropdownContentIOTypeColumns  setState setOpen annoState setAnnoState a iotype
         ],
-        style=Components.Style.init("join-item dropdown text-black z-30", Map [
+        style=Components.Style.init("join-item dropdown text-black z-20", Map [
             "content", Components.Style.init("!min-w-64")
         ])
     )

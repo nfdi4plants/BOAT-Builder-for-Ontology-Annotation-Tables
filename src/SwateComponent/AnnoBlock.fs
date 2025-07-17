@@ -65,7 +65,7 @@ module Searchblock =
             prop.className "relative"
             prop.children [
                 Daisy.join [
-                    prop.className "w-full z-30 text-white"
+                    prop.className "w-full z-20 text-white"
                     prop.children [
                         // Choose building block type dropdown element
                         // Dropdown building block type choice
@@ -98,7 +98,7 @@ module Searchblock =
             prop.className "relative"
             prop.children [
                 Daisy.join [
-                    prop.className "w-full z-30 text-white"
+                    prop.className "w-full z-20 text-white"
                     prop.children [
                         TermOrUnitizedSwitch (a, annoState, setAnnoState)
                         // helper for setting the body cell type
@@ -155,7 +155,7 @@ type Components =
                 ] 
             else
                 Html.div [
-                    prop.className "bg-[#ffe699] p-3 text-black z-30 w-fit"
+                    prop.className "bg-[#ffe699] p-3 text-black z-20 w-fit"
                     prop.children [
                         Html.div [
                             prop.className "flex flex-row"
