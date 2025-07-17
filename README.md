@@ -36,7 +36,7 @@ As a next step, you should consider connecting your added key or terms to ontolo
 
 Implementing ontologies enhances the findability and interoperable aspect of your data by using predefined ontologies with an unique ID.
 
-To do this, just click inside the text field and the build in search compoenent will search in the database for fitting onotlogies. You might change the word a bit to get the best results. The search suggestions can be expanded to see the definitions and the ID of the ontology. 
+To do this, just click inside the text field and the built-in search compoenent will search in the database for fitting onotlogies. You might change the word a bit to get the best results. The search suggestions can be expanded to see the definitions and the ID of the ontology. 
 
 Clicking on a ontology suggestion replaces the term in the text field and a checkmark appears on the right to ensure the use of an ontology.
 
@@ -50,7 +50,7 @@ Adding annotations highlights the charcaters in the document you asigned to it
 
 To have an overview of your already annotation, you can always click on "View annotations" to open a table which has all the annotations with their keys, terms and values.
 
-<img src= "src\img\preview.png" width="600">
+<img src= "src\img\preview.png" width="400">
 
 ## Download the finished product
 
