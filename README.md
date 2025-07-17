@@ -8,7 +8,7 @@
 
 First of all, start by uploading your free text document as a .docx, .pdf, .md or .txt file using the 'Browse' button. The explorer window will open to let you select the file.
 
-<img src= "src\img\upload.jpg" width="600">
+<img src= "src\img\upload.svg" width="600">
 
 After a quick load your protocol should be displayed as a whole and can be scrolled.
 
@@ -16,7 +16,7 @@ After a quick load your protocol should be displayed as a whole and can be scrol
 
 To add a step of the experimental process as an annotation, mark the word and right-click to open the BOAT context menu.
 
-<img src= "src\img\contextmenu.jpg" width="600">
+<img src= "src\img\contextmenu.svg" width="600">
 
 Inside the upper context menu, the marked term can be placed inside a new annotation as a Key, Term or Value. In the lower part, the selected word can be added to the annotation lastly created as the same types.
 
@@ -24,7 +24,7 @@ Here the Key refers to the header of the annotation and Term with an optional va
 
 After clicking an action inside the context menu, an annotation note is opened at the edge of the document with the marked word in the respective text field.
 
-<img src= "src\img\newAnno.jpg" width="600">
+<img src= "src\img\newAnno.svg" width="600">
 
 Now, you sucessfully added you first annotation! Hooray 🎉
 
@@ -36,15 +36,15 @@ As a next step, you should consider connecting your added key or terms to ontolo
 
 Implementing ontologies enhances the findability and interoperable aspect of your data by using predefined ontologies with an unique ID.
 
-To do this, just click inside the text field and the built-in search compoenent will search in the database for fitting onotlogies. You might change the word a bit to get the best results. The search suggestions can be expanded to see the definitions and the ID of the ontology. 
+To do this, just click inside the text field and the built-in search compoenent will search in the database for fitting ontologies. You might change the word a bit to get the best results. The search suggestions can be expanded to see the definitions and the ID of the ontology. 
 
-Clicking on a ontology suggestion replaces the term in the text field and a checkmark appears on the right to ensure the use of an ontology.
+Clicking on an ontology suggestion replaces the term in the text field and a checkmark appears on the right to ensure the use of an ontology.
 
 <img src= "src\img\termSearch.png" width="600">
 
-Adding annotations highlights the charcaters in the document you asigned to it
+Adding annotations highlights the charcaters in the document you asigned to it, key terms and values are in a different color.
 
-<img src= "src\img\highlight.jpg" width="600">
+<img src= "src\img\highlight.svg" width="600">
 
 ## Preview 
 
