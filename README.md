@@ -12,7 +12,7 @@ First of all, start by uploading your free text document as a .docx, .pdf, .md o
 
 After a quick load your protocol should be displayed as a whole and can be scrolled.
 
-## Adding and customize an annotation!
+## Adding and customize an annotation
 
 To add a step of the experimental process as an annotation, mark the word and right-click to open the BOAT context menu.
 

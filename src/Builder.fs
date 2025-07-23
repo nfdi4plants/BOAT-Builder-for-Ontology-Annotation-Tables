@@ -126,7 +126,7 @@ type Builder =
           ]
 
         Html.div [
-          prop.className "flex flex-row py-5 px-5"
+          prop.className "flex flex-row p-5"
           prop.id "main-parent"
           prop.onClick (fun e -> modalContext.setter initialModal)
           prop.children [
