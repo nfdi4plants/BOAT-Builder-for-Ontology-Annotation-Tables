@@ -18,7 +18,7 @@ type Help =
                     prop.className "flex flex-row"
                     prop.children [
                         Html.div [
-                            prop.className "w-1/5 sticky top-16 h-full bg-[#4cceb9] pl-4"
+                            prop.className "w-1/5 sticky top-16 h-full bg-[#4cceb9] pl-4 pb-4"
                             prop.children [
                                 Html.div [
                                     prop.className "mb-4"
