@@ -134,14 +134,6 @@ type Builder =
                   if filehtml = Unset then prop.className "w-1/4 px-2"
                   else prop.className "w-1/5 px-2"
                   prop.children [
-                      Daisy.alert [
-                        alert.warning
-                        prop.className "justify-start"
-                        prop.children [
-                            Html.i [ prop.className "fas fa-exclamation-triangle mr-2" ]
-                            Html.label [ prop.text "This is a test version. Feel free to explore around and write me issues (via Contact) if you find any bugs!" ]
-                        ]
-                      ]
                       Html.h1 [
                           prop.className "my-2"
                           prop.text "Select file here:"

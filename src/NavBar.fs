@@ -2,6 +2,7 @@ namespace Components
 
 open Feliz
 open Feliz.DaisyUI
+open Feliz.Router
 
 type Navbar =
 
@@ -83,6 +84,12 @@ type Navbar =
         let logoDP = StaticFile.import "./img/DataPLANT_logo_bg_transparent.svg"
         let logoGithub = StaticFile.import "./img/github-mark-white.png"
         let modalState, toggleState = React.useState(false)
+        let updateUrl = 
+          match statePage with
+          | Types.Page.Builder -> Router.navigate ("")
+          | Types.Page.Help -> Router.navigate ("Help")
+          | Types.Page.Contact -> Router.navigate ("Contact")
+
         Daisy.navbar [
             prop.className "bg-base-300 shadow-lg p-0 sticky top-0 z-50"
             prop.children [
@@ -97,7 +104,7 @@ type Navbar =
                             Html.img [ prop.src logoDP; prop.height 70; prop.width 70]
                         ]
                     ] 
-                    Html.div [ prop.text "BOAT - Builder for Ontology Annotation Tables"; prop.className "font-semibold" ]
+                    Html.div [ prop.text "BOAT"; prop.className "font-semibold" ]
                   ]
                 ]
 
@@ -129,29 +136,44 @@ type Navbar =
                   prop.children [
                     Daisy.button.a [ 
                         prop.text "Builder"
-                        prop.className "hover:bg-[#3f8fae]"
-                        prop.onClick (fun _ -> setPage(Types.Page.Builder)) 
+                        if statePage = Types.Page.Builder then prop.className "bg-[#3f8fae]"
+                        else prop.className "hover:bg-[#b9e1f0]"
+                        prop.onClick (fun _ -> 
+                          setPage(Types.Page.Builder)
+                          updateUrl
+                        ) 
                     ]
                     Daisy.button.a [ 
                         prop.text "Contact"
-                        prop.className "hover:bg-[#3f8fae]"
-                        prop.onClick (fun _ -> setPage(Types.Page.Contact)) 
+                        if statePage = Types.Page.Contact then prop.className "bg-[#3f8fae]"
+                        else prop.className "hover:bg-[#b9e1f0]"
+                        prop.onClick (fun _ -> 
+                          setPage(Types.Page.Contact)
+                          updateUrl
+                        ) 
                     ]
                     Daisy.button.a [ 
                         prop.text "Help"
-                        prop.className "hover:bg-[#3f8fae]"
-                        prop.onClick (fun _ -> setPage(Types.Page.Help)) 
+                        if statePage = Types.Page.Help then prop.className "bg-[#3f8fae]"
+                        else prop.className "hover:bg-[#b9e1f0]"
+                        prop.onClick (fun _ -> 
+                          setPage(Types.Page.Help)
+                          updateUrl
+                          ) 
                     ]
                     Html.a [
                       prop.href "https://github.com/nfdi4plants/BOAT-Builder-for-Ontology-ARC-Templates"
                       prop.target.blank 
                       prop.children [
-                          Html.img [ 
-                              prop.src logoGithub
-                              prop.className "p-1"
-                              prop.height 40
-                              prop.width 40
-                          ]
+                          // Html.img [ 
+                          //     <i class="fa-brands fa-github"></i>
+                          //     prop.className "p-1"
+                          //     prop.height 40
+                          //     prop.width 40
+                          // ]
+                          Html.i [
+                            prop.className "fa-brands fa-github fa-xl pr-2"
+                            ]
                       ]
                     ]
                   ]

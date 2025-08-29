@@ -1,6 +1,7 @@
 namespace App
 
 open Feliz
+open Feliz.Router
 open Types
 open Components
 open Fable.SimpleJson
@@ -64,6 +65,8 @@ type View =
         
         let currentpage,setpage = React.useState(Types.Page.Builder) 
 
+
+
         React.strictMode [
             React.contextProvider(Contexts.ModalContext.createModalContext, myModalContext, React.fragment [ //makes the context accesable for the whole project
                 Html.div [
@@ -93,7 +96,11 @@ type View =
                             ]
                         ]
                         Components.Footer.Main
+                        
                     ]
                 ]
             ])
-        ]
+            
+                
+    ]
+        

@@ -158,8 +158,7 @@ type PaperWithMarker =
                   prop.onClick (fun _ ->
                     setWarningFlag (not warningFlag) 
                     setLocalFile "warningModal" warningFlag             
-                    )
-                  
+                    )                  
                 ]
               ]
             ]
