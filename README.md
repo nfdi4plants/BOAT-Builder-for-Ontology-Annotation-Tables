@@ -1,4 +1,4 @@
-# Tutorial
+# About
 
 [Builder for Ontology Annotation Tables](https://nfdi4plants.github.io/BOAT-Builder-for-Ontology-Annotation-Tables/) is a web-based tool to direct assist in creating metadata annotations out of your free text protocols. These can be connected with ontologies and you get an MS Excel and ARC compatible output containing your annotations describing experimental processes.
 
@@ -6,7 +6,7 @@
 
 ## Documentation
 
-A documentation can be found on the [tool's website](https://nfdi4plants.github.io/BOAT-Builder-for-Ontology-Annotation-Tables/#/Help).
+A documentation can be found on the [boat website](https://nfdi4plants.github.io/BOAT-Builder-for-Ontology-Annotation-Tables/#/Help).
 
 # Information for developers
 
