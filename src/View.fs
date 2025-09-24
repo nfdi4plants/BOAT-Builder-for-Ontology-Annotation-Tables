@@ -19,8 +19,13 @@ type View =
             | _ -> false //if false then something exists and the else case gets started
 
         let initialInteraction (id: string) =
-            if isLocalStorageClear id () = true then []
-            else Decode.fromJsonString decoderAnno (Browser.WebStorage.localStorage.getItem id)  
+            try 
+                if isLocalStorageClear id () = true then []
+                else Decode.fromJsonString decoderAnno (Browser.WebStorage.localStorage.getItem id)              
+            with
+            | e -> 
+                Browser.Dom.console.warn (sprintf "Error parsing JSON from localStorage for key '%s': %s" id e.Message)
+                []
 
         let (AnnotationState: Annotation list, setAnnotationState) = React.useState (initialInteraction "Annotations")
 
@@ -41,7 +46,6 @@ type View =
             let JSONstring= 
                 Json.stringify nextNAme 
             Browser.WebStorage.localStorage.setItem(id, JSONstring)
-
 
         let initialFileName (id: string) =
             if isLocalStorageClear id () = true then ""
