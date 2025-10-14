@@ -5,42 +5,6 @@ open Feliz.DaisyUI
 open Feliz.Router
 
 type Navbar =
-
-    static member AnnotationModal (isActive: bool, toggleActive: bool -> unit, annoState, setAnnoState) = 
-        // Modal for displaying annotations
-
-      Daisy.modal.dialog [
-          if annoState = [] && isActive = true then toggleActive(false)
-          prop.className [
-            if isActive then "modal-open z-50"
-            else "modal-close"
-          ]          
-          prop.children [
-            Daisy.modalBox.div [
-              prop.className "p-0"
-              prop.children [
-                Html.form [
-                  prop.method "dialog"
-                  prop.children [
-                    Daisy.button.button [
-                      prop.className "btn btn-sm btn-circle absolute right-2 top-2 z-50 h-5 w-5"
-                      prop.text "✕"
-                      prop.onClick (fun _ -> toggleActive(false))
-                      
-                    ]
-                  ]
-                ]
-                Html.div [
-                  prop.className "p-inherit overflow-auto"
-                  prop.children [
-                    PreviewTable.table(annoState, setAnnoState, toggleActive)
-                  ]
-                ]
-              ]
-            ]
-          ]
-        ]
-
       
 
     static member NavbarButton(text: string, onClick: unit -> unit, annoState,fileName: string, ?disabled) = 
@@ -78,24 +42,36 @@ type Navbar =
               prop.disabled disabled
           ]
 
-          
+    static member NavbarNavigationLi(page: Types.Page, setPage: Types.Page -> unit, isActive: bool) =
+        Html.li [
+            Html.a [
+              prop.className [
+                if isActive then "menu-active"
+              ]
+              prop.onClick(fun e ->
+                e.preventDefault()
+                setPage(page)  
+              )
+              prop.text (sprintf "%A" page)
+            ]
+        ]
 
     static member Main(setPage: Types.Page -> unit, statePage: Types.Page, annoState, setAnnoState, fileName) =
         let logoDP = StaticFile.import "./img/DataPLANT_logo_bg_transparent.svg"
         let logoGithub = StaticFile.import "./img/github-mark-white.png"
         let modalState, toggleState = React.useState(false)
-        let updateUrl = 
+        React.useEffect((fun () -> 
           match statePage with
           | Types.Page.Builder -> Router.navigate ("")
           | Types.Page.Help -> Router.navigate ("Help")
           | Types.Page.Contact -> Router.navigate ("Contact")
+        ), [| box statePage |])
 
         Daisy.navbar [
-            prop.className "bg-base-300 shadow-lg p-0 sticky top-0 z-50"
+            prop.className "bg-base-300 border-b-1 border-base-content p-0 sticky top-0 z-50"
             prop.children [
-                Navbar.AnnotationModal(modalState, toggleState, annoState, setAnnoState)
                 Daisy.navbarStart [
-                  prop.className "gap-2 items-center"
+                  prop.className "gap-2 items-center px-2"
                   prop.children [ 
                     Html.a [
                         prop.href "https://www.nfdi4plants.de/"
@@ -104,64 +80,106 @@ type Navbar =
                             Html.img [ prop.src logoDP; prop.height 70; prop.width 70]
                         ]
                     ] 
-                    Html.div [ prop.text "BOAT"; prop.className "font-semibold" ]
                   ]
                 ]
 
                 Daisy.navbarCenter [
                   prop.className "gap-2"
                   prop.children [
-                    Navbar.NavbarButton(
-                      "View annotations",
-                      (fun _ -> toggleState(true)),
-                      annoState,
-                      fileName,
-                      disabled = List.isEmpty annoState
-                    )
+                    Html.div [ prop.text "BOAT"; prop.className "font-bold" ]
+                    // Navbar.NavbarButton(
+                    //   "View annotations",
+                    //   (fun _ -> toggleState(true)),
+                    //   annoState,
+                    //   fileName,
+                    //   disabled = List.isEmpty annoState
+                    // )
                 
-                    Navbar.NavbarButton(
-                      "Download",
-                      (fun _ -> ()), //replace with download funcgtion
-                      annoState,
-                      fileName,
-                      disabled = List.isEmpty annoState
-                    )
+                    // Navbar.NavbarButton(
+                    //   "Download",
+                    //   (fun _ -> ()), //replace with download funcgtion
+                    //   annoState,
+                    //   fileName,
+                    //   disabled = List.isEmpty annoState
+                    // )
                   ]
                 
 
                 ]
 
                 Daisy.navbarEnd [
-                  prop.className "gap-2"
+                  prop.className "gap-2 px-2"
                   prop.children [
+                    // Html.div [
+                    //   prop.className "dropdown dropdown-end"
+                    //   prop.children [
+                    //     Html.div [
+                    //       prop.tabIndex 0
+                    //       prop.role.button
+                    //       prop.className "btn btn-ghost btn-square"
+                    //       prop.children [
+                    //         Svg.svg [
+                    //           svg.className "inline-block w-5 h-5 stroke-current"
+                    //           svg.fill "none"
+                    //           svg.viewBox(0, 0, 24, 24)
+                    //           svg.xmlns "http://www.w3.org/2000/svg"
+                    //           svg.children [
+                    //             Svg.path [
+                    //               svg.strokeLineCap "round"
+                    //               svg.strokeLineJoin "round"
+                    //               svg.strokeWidth 2
+                    //               svg.d "M4 6h16M4 12h16M4 18h16"
+                    //             ]
+                    //           ]
+                    //         ]
+                    //       ]
+                    //     ]
+                    //     Html.ul [
+                    //           prop.tabIndex -1
+                    //           prop.className "menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-2 w-52 shadow"
+                    //           prop.children [
+                    //             Navbar.NavbarNavigationLi(Types.Page.Builder, setPage, (statePage = Types.Page.Builder))
+                    //             Navbar.NavbarNavigationLi(Types.Page.Contact, setPage, (statePage = Types.Page.Contact))
+                    //             Navbar.NavbarNavigationLi(Types.Page.Help, setPage, (statePage = Types.Page.Help))
+                    //             Html.li [Html.a [prop.href "https://github.com/nfdi4plants/BOAT-Builder-for-Ontology-ARC-Templates"; prop.target.blank; prop.text "GitHub"]]
+                    //           ]
+                    //         ]
+                    //   ]
+                    // ]
                     Daisy.button.a [ 
                         prop.text "Builder"
-                        if statePage = Types.Page.Builder then prop.className "bg-[#3f8fae]"
-                        else prop.className "hover:bg-[#b9e1f0]"
+                        prop.className [
+                          if statePage = Types.Page.Builder then "bg-[#3f8fae]"
+                          else "hover:bg-[#b9e1f0]"
+                        ]
                         prop.onClick (fun _ -> 
                           setPage(Types.Page.Builder)
-                          updateUrl
+                        
                         ) 
                     ]
                     Daisy.button.a [ 
                         prop.text "Contact"
-                        if statePage = Types.Page.Contact then prop.className "bg-[#3f8fae]"
-                        else prop.className "hover:bg-[#b9e1f0]"
+                        prop.className [
+                          if statePage = Types.Page.Contact then "bg-[#3f8fae]"
+                          else "hover:bg-[#b9e1f0]"
+                        ]
                         prop.onClick (fun _ -> 
                           setPage(Types.Page.Contact)
-                          updateUrl
                         ) 
                     ]
                     Daisy.button.a [ 
                         prop.text "Help"
-                        if statePage = Types.Page.Help then prop.className "bg-[#3f8fae]"
-                        else prop.className "hover:bg-[#b9e1f0]"
+                        prop.className [
+                          if statePage = Types.Page.Help then "bg-[#3f8fae]"
+                          else "hover:bg-[#b9e1f0]"
+                        ]
                         prop.onClick (fun _ -> 
                           setPage(Types.Page.Help)
-                          updateUrl
+                          
                           ) 
                     ]
                     Html.a [
+                      prop.className "btn btn-square"
                       prop.href "https://github.com/nfdi4plants/BOAT-Builder-for-Ontology-ARC-Templates"
                       prop.target.blank 
                       prop.children [
@@ -172,8 +190,8 @@ type Navbar =
                           //     prop.width 40
                           // ]
                           Html.i [
-                            prop.className "fa-brands fa-github fa-xl pr-2"
-                            ]
+                            prop.className "fa-brands fa-github fa-xl"
+                          ]
                       ]
                     ]
                   ]

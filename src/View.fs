@@ -75,7 +75,7 @@ type View =
             React.contextProvider(Contexts.ModalContext.createModalContext, myModalContext, React.fragment [ //makes the context accesable for the whole project
                 Html.div [
                     prop.id "mainView"
-                    prop.className "flex min-h-screen flex-col"
+                    prop.className "flex min-h-screen flex-col bg-accent text-accent-content"
                     prop.children [
                         Components.Navbar.Main(setpage,currentpage, AnnotationState, setState, fileNamewithoutType)
                         Html.div [

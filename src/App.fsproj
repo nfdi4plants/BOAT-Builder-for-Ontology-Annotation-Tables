@@ -30,6 +30,7 @@
     <Compile Include="SwateComponent\AnnoBlock.fs" />
     <Compile Include="SwateComponent\PreviewTable.fs" />
     <Compile Include="DownloadParser.fs" />
+    <Compile Include="ActionBar.fs" />
     <Compile Include="Builder.fs" />
     <Compile Include="NavBar.fs" />
     <Compile Include="Footer.fs" />

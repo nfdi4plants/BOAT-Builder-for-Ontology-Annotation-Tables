@@ -171,7 +171,10 @@ module Lists =
 type FileUpload =
     static member DisplayHtml(htmlString: string, annoList: Annotation list, elementID: string, isLocalStorageClear) = 
       Html.div [
-        PaperWithMarker.Main(htmlString, Lists.keyList annoList, Lists.termlist annoList, Lists.valuelist annoList, elementID, isLocalStorageClear)
+        prop.className "flex justify-end"
+        prop.children [
+          PaperWithMarker.Main(htmlString, Lists.keyList annoList, Lists.termlist annoList, Lists.valuelist annoList, elementID, isLocalStorageClear)
+        ]
       ]
 
     [<ReactComponent>]
@@ -198,7 +201,7 @@ type FileUpload =
         )
 
       Html.div [
-        prop.className "mt-5"
+        // prop.className "mt-5"
         prop.id elementID
         prop.children [
           ReactElements.Document(

@@ -27,7 +27,6 @@ html, body {
   height: 100%;
   overflow: auto;
   overflow-x: hidden;
-  background-color: #a5e7dc
 }
 
 ::highlight(keyColor) {

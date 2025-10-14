@@ -37,7 +37,20 @@ type Builder =
             location = (0,0)
         }
 
-        let modalContext = React.useContext (Contexts.ModalContext.createModalContext)    
+        let modalContext = React.useContext (Contexts.ModalContext.createModalContext)
+
+        let del = fun () ->
+            let setLocalFile (id: string) (nextFile: UploadedFile) = // I copied this from FileUploader. This is not DRY.
+                let JSONString = Json.stringify nextFile 
+                Browser.WebStorage.localStorage.setItem(id, JSONString)
+            setFilehtml Unset
+
+            setLocalFile "file" Unset
+
+            setState []
+
+            setFileName ""
+            setLocalFileName "fileName" ""
 
         let turnOffContext (event: Browser.Types.Event) = 
             modalContext.setter initialModal 
@@ -47,32 +60,25 @@ type Builder =
             {new IDisposable with member this.Dispose() = window.removeEventListener ("resize", turnOffContext) }    
         )
         
-        let pleaceHolder =
+        let placeholder =
           Html.div [
-              prop.className "overflow-x-hidden h-full flex flex-row gap-2 w-full relative"
-              prop.children [
-                Html.div [
-                  prop.className "w-2/3 flex items-center justify-center"
+            prop.className "flex justify-center items-center w-full p-10"
+            prop.children [
+              Html.div [
+                  prop.className "p-2 md:p-5 lg:p-10 flex justify-center items-center flex-col bg-base-200/80 shadow-lg rounded-lg max-w-2xl"
                   prop.children [
-                    Daisy.badge [
-                      prop.className ""
-                      badge.outline
-                      badge.lg
-                      badge.info
-                      prop.text "Upload a file!"
-                    ]
-                    // Html.div [prop.text "Upload a file!"; prop.className "text-[#4fb3d9]"]
+                      Html.h1 [
+                          prop.className "my-2"
+                          prop.text "Select file here:"
+                      ]
+                      Html.div [
+                          FileUpload.UploadDisplay(filehtml,setFilehtml, setState, setFileName, setLocalFileName)
+                      ]
+                      
                   ]
-                ]
-                Html.div [
-                  prop.className "w-1/3"
-                  prop.children [
-                    Html.div [
-                    ]
-                  ]
-                ]
               ]
             ]
+          ]
 
         let paper (width: string) (display: ReactElement) =
           Html.div [
@@ -82,7 +88,9 @@ type Builder =
               |true -> Contextmenu.onContextMenu (modalContext, annoState, setState, elementID)
               |false -> Html.none
               Html.div [
-                prop.className width
+                prop.className [
+                  width
+                ]
                 prop.onContextMenu (fun e ->
                     // https://stackoverflow.com/a/2614472/12858021
                     let Selection = window.getSelection()
@@ -102,7 +110,7 @@ type Builder =
                 prop.children [
                   Html.div [
                       prop.text fileName
-                      prop.className "mb-2 pt-5 fixed bg-[#a5e7dc] z-30 top-16 w-2/3"
+                      prop.className "p-2"
                   ]
                   display
                 ]
@@ -113,7 +121,7 @@ type Builder =
                   
                   Html.div [
                       prop.text "Annotations"
-                      prop.className "mb-2 pt-5 fixed bg-[#a5e7dc] z-30 top-16"
+                      prop.className "p-2"
                       prop.style [
                         style.width.inheritFromParent
                     ]
@@ -125,41 +133,33 @@ type Builder =
             ]
           ]
 
-        Html.div [
-          prop.className "flex flex-row p-5"
-          prop.id "main-parent"
-          prop.onClick (fun e -> modalContext.setter initialModal)
-          prop.children [
-              Html.div [
-                  if filehtml = Unset then prop.className "w-1/4 px-2"
-                  else prop.className "w-1/5 px-2"
+        React.fragment [
+          match filehtml with
+          | Unset -> ()
+          | _ -> ActionBar.Main(annoState, setState, del, fileName)
+          Html.div [
+            prop.className "flex flex-row"
+            prop.id "main-parent"
+            prop.onClick (fun e -> modalContext.setter initialModal)
+            prop.children [
+                Html.div [
+                  prop.className "w-full p-2"
                   prop.children [
-                      Html.h1 [
-                          prop.className "my-2"
-                          prop.text "Select file here:"
-                      ]
-                      Html.div [
-                          FileUpload.UploadDisplay(filehtml,setFilehtml, setState, setFileName, setLocalFileName)
-                      ]
-                      
+                    match filehtml with
+                      | Unset ->
+                        placeholder
+                      | Docx fileString ->
+                        paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
+                      | PDF fileString ->
+                        paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID annoState)
+                      | Txt fileString ->
+                        paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
                   ]
-              ]
-              Html.div [
-                prop.className "w-4/5 px-2"
-                prop.children [
-                  match filehtml with
-                    | Unset ->
-                      pleaceHolder
-                    | Docx fileString ->
-                      paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
-                    | PDF fileString ->
-                      paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID annoState)
-                    | Txt fileString ->
-                      paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
                 ]
               ]
             ]
-          ]
+        ]
+
     
         
         
