@@ -11,7 +11,7 @@ module PreviewTable =
 
     let table (annoState: Annotation list, setState: Annotation list -> unit, toggleActive) =
         Html.div [
-            prop.className "table border border-black"
+            // prop.className "table border border-black max-w-full"
             prop.children [
                 Daisy.table [
                     prop.className "border-b border-black bg-white"

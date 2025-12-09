@@ -25,30 +25,29 @@ type ActionBar =
           ]          
           prop.children [
             Html.div [
-              prop.className "modal-box"
-              prop.children [
+                prop.className "modal-box w-fit max-w-4xl max-h-[80vh] overflow-y-auto"
+                prop.children [
                 Html.form [
-                  prop.method "dialog"
-                  prop.children [
+                    prop.method "dialog"
+                    prop.children [
                     Daisy.button.button [
-                      prop.className "btn btn-sm btn-circle absolute right-2 top-2 z-50 h-5 w-5"
-                      prop.text "✕"
-                      prop.onClick (fun _ -> toggleActive(false))
-                      
+                        prop.className "btn btn-sm btn-circle absolute right-2 top-2 z-50 h-5 w-5"
+                        prop.text "✕"
+                        prop.onClick (fun _ -> toggleActive(false))
+                        
                     ]
-                  ]
+                    ]
                 ]
                 Html.div [
-                  prop.className "p-inherit overflow-auto"
-                  prop.children [
+                    prop.className "p-inherit "
+                    prop.children [
                     match annoState = [] && isActive = true with
                     | true -> Html.h1 [prop.text "No annotations to display."]
                     | false ->
                         PreviewTable.table(annoState, setAnnoState, toggleActive)
-                  ]
+                    ]
                 ]
-              ]
-            ]
+                ]           ]
           ]
         ]
 
@@ -127,7 +126,48 @@ type ActionBar =
                             ]
                         ]
                     ]
-                    ActionBar.Btn(Html.i [prop.className "fa-solid fa-trash"], (fun _ -> del()), "Delete", classNames="btn-error", tooltipClassNames="tooltip-left ml-auto" )
+                    Html.div [
+                        prop.className [
+                           "tooltip tooltip-left ml-auto"
+                        ]
+                        prop.dataTip "Delete"
+                        prop.children [
+                            Daisy.dropdown [
+                                dropdown.end'
+                                prop.children [
+
+                                    Html.button [
+                                        prop.className [
+                                            "btn btn-sm btn-square"
+                                            "btn-error"
+                                        ]
+                                        prop.children [
+                                            Html.i [prop.className "fa-solid fa-trash"]
+                                        ]
+                                    ]
+
+                                    Daisy.dropdownContent [
+                                        prop.className "p-2 shadow menu bg-base-100 rounded-box w-52"
+                                        prop.tabIndex 0
+                                        prop.children [
+                                            Html.li [Html.a [
+                                                prop.text "delete all annotations"
+                                                prop.onClick (fun _ -> 
+                                                    setAnnoState []
+                                                )
+                                                if annoState = [] then prop.className"cursor-not-allowed"
+                                            ]]
+                                            Html.li [Html.a [
+                                                prop.text "delete document"
+                                                prop.onClick (fun _ -> del())
+                                            ]]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                    // ActionBar.Btn(Html.i [prop.className "fa-solid fa-trash"], (fun _ -> del()), "Delete", classNames="btn-error", tooltipClassNames="tooltip-left ml-auto" )
                 ]
             ]
         ]

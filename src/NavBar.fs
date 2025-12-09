@@ -80,31 +80,8 @@ type Navbar =
                             Html.img [ prop.src logoDP; prop.height 70; prop.width 70]
                         ]
                     ] 
+                    Html.div [ prop.text "BOAT"; prop.className "font-bold text-lg" ]
                   ]
-                ]
-
-                Daisy.navbarCenter [
-                  prop.className "gap-2"
-                  prop.children [
-                    Html.div [ prop.text "BOAT"; prop.className "font-bold" ]
-                    // Navbar.NavbarButton(
-                    //   "View annotations",
-                    //   (fun _ -> toggleState(true)),
-                    //   annoState,
-                    //   fileName,
-                    //   disabled = List.isEmpty annoState
-                    // )
-                
-                    // Navbar.NavbarButton(
-                    //   "Download",
-                    //   (fun _ -> ()), //replace with download funcgtion
-                    //   annoState,
-                    //   fileName,
-                    //   disabled = List.isEmpty annoState
-                    // )
-                  ]
-                
-
                 ]
 
                 Daisy.navbarEnd [
@@ -175,11 +152,10 @@ type Navbar =
                         ]
                         prop.onClick (fun _ -> 
                           setPage(Types.Page.Help)
-                          
                           ) 
                     ]
                     Html.a [
-                      prop.className "btn btn-square"
+                      // prop.className "btn btn-square"
                       prop.href "https://github.com/nfdi4plants/BOAT-Builder-for-Ontology-ARC-Templates"
                       prop.target.blank 
                       prop.children [

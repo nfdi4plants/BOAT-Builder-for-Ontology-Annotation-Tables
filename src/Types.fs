@@ -99,7 +99,6 @@ type Annotation =
             HighlightKeys = highKey
             HighlightTerms = highTerm
             HighlightValues = highValue
-
         }
     member this.ToggleOpen () = {this with IsOpen = not this.IsOpen}
 
