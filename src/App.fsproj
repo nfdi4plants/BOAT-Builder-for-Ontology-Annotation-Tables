@@ -3,7 +3,6 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="index.html" />
     <Compile Include="Types.fs" />
     <Compile Include="Context.fs" />
     <Compile Include="Extensions.fs" />
