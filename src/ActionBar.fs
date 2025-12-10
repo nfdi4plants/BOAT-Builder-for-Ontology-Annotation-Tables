@@ -86,7 +86,7 @@ type ActionBar =
             Browser.Dom.document.body
             )
             Html.div [
-                prop.className "w-full bg-base-200 flex flex-row items-center gap-2 p-2 shadow-md sticky top-16 z-40"
+                prop.className "w-full bg-base-200/80 flex flex-row items-center gap-2 p-2 shadow-md sticky top-16 z-40"
                 prop.id "action-bar"
                 prop.children [
                     ActionBar.Btn(Html.i [prop.className "fa-solid fa-table-list"], (fun _ -> setShowAnnotationModal true), "Show Details", tooltipClassNames="tooltip-right" )
