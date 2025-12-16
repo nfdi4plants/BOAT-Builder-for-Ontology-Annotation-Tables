@@ -1,4 +1,4 @@
-module BuildingBlock.Dropdown
+module Dropdown
 
 open Feliz
 open Feliz.DaisyUI

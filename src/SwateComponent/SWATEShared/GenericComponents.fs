@@ -4,7 +4,7 @@ open Feliz
 
 [<AutoOpen>]
 
-type FileUpload =
+type FileUploadCollapse =
 
     static member CollapseButton(isCollapsed, setIsCollapsed, ?collapsedIcon, ?collapseIcon, ?classes: string) =
         Html.label [

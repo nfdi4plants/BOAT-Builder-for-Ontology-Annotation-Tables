@@ -183,7 +183,7 @@ module TermSearchAux =
                             ]
                         ]
                     ]
-                    FileUpload.CollapseButton(show, setShow, classes="btn-sm btn-ghost")
+                    FileUploadCollapse.CollapseButton(show, setShow, classes="btn-sm btn-ghost")
                 ]
             ]
 

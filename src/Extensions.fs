@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module Extensions
+module ExtensionsJSON
 
 open System
 open Fable.Core

@@ -74,7 +74,7 @@ module Searchblock =
                             Helperfuncs.updateAnnotation((fun anno -> 
                                 {anno with Search.KeyType = cHD }
                             ), a, annoState, setAnnoState)
-                        BuildingBlock.Dropdown.Main(ui, setUi, annoState, setKeyType, a)
+                        Dropdown.Main(ui, setUi, annoState, setKeyType, a)
                         // Term search field
                         // if model.HeaderCellType.HasOA() then
                         let setter (oaOpt: OntologyAnnotation option) =
