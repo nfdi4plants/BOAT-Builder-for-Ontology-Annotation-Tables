@@ -201,7 +201,7 @@ let Main(state:  BuildingBlock.BuildingBlockUIState, setUi: BuildingBlock.Buildi
                 // prop.onClick (fun e -> log "hehehe")
                 prop.role "button"
                 join.item
-                prop.className "flex-nowrap"
+                prop.className "flex-nowrap z-1"
                 prop.children [
                     Html.span (annoState[a].Search.KeyType.ToString())
                     Html.i [
@@ -219,7 +219,7 @@ let Main(state:  BuildingBlock.BuildingBlockUIState, setUi: BuildingBlock.Buildi
             | DropdownPage.IOTypes (iotype: Types.CompositeHeaderDiscriminate) -> Html.none
                 // DropdownElements.dropdownContentIOTypeColumns  setState setOpen annoState setAnnoState a iotype
         ],
-        style=Components.Style.init("join-item dropdown text-black z-auto", Map [
+        style=Components.Style.init("join-item dropdown text-black  ", Map [
             "content", Components.Style.init("!min-w-64")
         ])
     )

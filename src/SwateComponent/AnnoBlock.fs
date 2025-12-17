@@ -192,7 +192,7 @@ type Components =
 
         let annotationNote (specIndex: int) (hasChevron: bool) =
             Html.div [
-                prop.className "!z-1"
+                // prop.className  "!z-1 relative" "
                 prop.children [
                     Html.div [
                         prop.className "bg-[#ffe699] p-3 text-black w-fit"
@@ -221,7 +221,6 @@ type Components =
                 ]
             ]
 
-    
         Html.div [
             prop.style [
                 style.position.absolute
@@ -254,39 +253,45 @@ type Components =
                         ]
                     ]
                
-                elif mapOfSameHeight[floor a.Height].Length = 1 && a.IsOpen = true then               
-                    annotationNote index true
-                elif mapOfSameHeight[floor a.Height].Length > 1 &&  not (mapOfSameHeight[floor a.Height] |> List.exists (fun anno -> anno.IsOpen)) then
-                    Daisy.indicator [
-                        prop.className "!z-0"
+                elif mapOfSameHeight[floor a.Height].Length = 1 && a.IsOpen = true then 
+                    Html.div [
+                        prop.className  "!z-1 relative" 
                         prop.children [
-                            Daisy.indicatorItem [prop.text (string mapOfSameHeight[floor a.Height].Length); prop.className "badge badge-secondary badge-sm"]
-                            Html.button [
-                                prop.className "cursor-pointer"
-                                prop.children [
-                                    Html.i [
-                                        prop.className "fa-solid fa-comment-dots"
-                                        prop.style [style.color "#ffe699"]
-                                        prop.onClick (fun e ->
-                                            let updatedAnnos = 
-                                                annoState 
-                                                |> List.mapi (fun i anno -> 
-                                                    if i = index then anno.ToggleOpen()
-                                                    else {anno with IsOpen = false}
-                                                )
-                                            setState updatedAnnos                            
-                                        )
+                        annotationNote index true
+                        ]
+                    ]
+         
+                elif mapOfSameHeight[floor a.Height].Length > 1 &&  not (mapOfSameHeight[floor a.Height] |> List.exists (fun anno -> anno.IsOpen)) then 
+                    Html.div [
+                        prop.className  "!z-0 relative"
+                        prop.children [
+                            Daisy.indicator [
+                                Daisy.indicatorItem [prop.text (string mapOfSameHeight[floor a.Height].Length); prop.className "badge badge-secondary badge-sm"]
+                                Html.button [
+                                    prop.className "cursor-pointer"
+                                    prop.children [
+                                        Html.i [
+                                            prop.className "fa-solid fa-comment-dots"
+                                            prop.style [style.color "#ffe699"]
+                                            prop.onClick (fun e ->
+                                                let updatedAnnos = 
+                                                    annoState 
+                                                    |> List.mapi (fun i anno -> 
+                                                        if i = index then anno.ToggleOpen()
+                                                        else {anno with IsOpen = false}
+                                                    )
+                                                setState updatedAnnos                            
+                                            )
+                                        ]
                                     ]
-                                ]
-                            ] 
+                                ] 
+                            ]
                         ]
                     ]
                     
-
-
-                elif mapOfSameHeight[floor a.Height].Length > 1 && a.IsOpen = true then 
+                elif mapOfSameHeight[floor a.Height].Length > 1 && a.IsOpen = true then //
                     Html.div [
-                        prop.className  "z-1"
+                        prop.className  "!z-1 relative"
                         prop.children [
                             Html.div [
                                 prop.className "flex flex-col gap-2 border border-3 border-secondary p-2 bg-white"
@@ -299,7 +304,7 @@ type Components =
                                         annotationNote newIndex false
                                 ]
                             ]
-                    ]
+                        ]
                     ]
             ]
         ]
