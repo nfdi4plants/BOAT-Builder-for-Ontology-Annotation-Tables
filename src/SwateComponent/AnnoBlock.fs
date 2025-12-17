@@ -98,7 +98,7 @@ module Searchblock =
             prop.className "relative"
             prop.children [
                 Daisy.join [
-                    prop.className "w-full z-20 text-white"
+                    prop.className "w-full !z-1 text-white"
                     prop.children [
                         TermOrUnitizedSwitch (a, annoState, setAnnoState)
                         // helper for setting the body cell type
@@ -130,11 +130,12 @@ type Components =
        
         let (ui: BuildingBlock.BuildingBlockUIState, setUi) = React.useState(BuildingBlock.BuildingBlockUIState.init)        
 
+        
         let a = annoState.[index] 
-            
         let mapOfSameHeight =
+             
             annoState 
-            |> List.groupBy (fun a -> a.Height)
+            |> List.groupBy (fun a -> floor a.Height)
             |> Map.ofList
 
         let deleteButton (specIndex: int) =
@@ -191,63 +192,75 @@ type Components =
 
         let annotationNote (specIndex: int) (hasChevron: bool) =
             Html.div [
-                    prop.className "bg-[#ffe699] p-3 text-black z-auto w-fit"
-                    prop.children [
-                        Html.div [
-                            prop.className "flex flex-row"
-                            prop.children [
-                                if hasChevron then closeButton specIndex
-                                Html.div [
-                                    prop.className "space-y-2 flex flex-col gap-2"
-                                    prop.children [
-                                        Html.div [
-                                            prop.className "flex flex-row justify-end"
-                                            prop.children [deleteButton specIndex]
+                prop.className "!z-1"
+                prop.children [
+                    Html.div [
+                        prop.className "bg-[#ffe699] p-3 text-black w-fit"
+                        prop.children [
+                            Html.div [
+                                prop.className "flex flex-row"
+                                prop.children [
+                                    if hasChevron then closeButton specIndex
+                                    Html.div [
+                                        prop.className "space-y-2 flex flex-col gap-2"
+                                        prop.children [
+                                            Html.div [
+                                                prop.className "flex flex-row justify-end"
+                                                prop.children [deleteButton specIndex]
+                                            ]
+                                            Searchblock.SearchElementKey (ui, setUi, annoState, setState, specIndex)
+                                            if annoState[specIndex].Search.KeyType.IsTermColumn() then
+                                                Searchblock.SearchElementBody(specIndex, annoState, setState)
+                                                valueInput specIndex
                                         ]
-                                        Searchblock.SearchElementKey (ui, setUi, annoState, setState, specIndex)
-                                        if annoState[specIndex].Search.KeyType.IsTermColumn() then
-                                            Searchblock.SearchElementBody(specIndex, annoState, setState)
-                                            valueInput specIndex
                                     ]
                                 ]
                             ]
-                        ]
-                    ]  
-                ] 
+                        ]  
+                    ] 
+                ]
+            ]
 
     
         Html.div [
             prop.style [
                 style.position.absolute
-                style.top (int a.Height + 30)
+                style.top (int a.Height )
             ]
             prop.children [
-                if mapOfSameHeight[a.Height].Length = 1 && a.IsOpen = false then 
-                    Html.button [
-                        prop.className "cursor-pointer"
+                if mapOfSameHeight[floor a.Height].Length = 1 && a.IsOpen = false then 
+                    Html.div [
+                        prop.className "!z-0"
                         prop.children [
-                            Html.i [
-                                prop.className "fa-solid fa-comment-dots"
-                                prop.style [style.color "#ffe699"]
-                                prop.onClick (fun e ->
-                                    Helperfuncs.updateAnnotation ((fun e -> e.ToggleOpen()), index, annoState, setState) 
-                                    let updatedAnnos = 
-                                        annoState 
-                                        |> List.mapi (fun i anno -> 
-                                            if i = index then anno.ToggleOpen()
-                                            else {anno with IsOpen = false}
+                            Html.button [
+                                prop.className "cursor-pointer"
+                                prop.children [
+                                    Html.i [
+                                        prop.className "fa-solid fa-comment-dots"
+                                        prop.style [style.color "#ffe699"]
+                                        prop.onClick (fun e ->
+                                            Helperfuncs.updateAnnotation ((fun e -> e.ToggleOpen()), index, annoState, setState) 
+                                            let updatedAnnos = 
+                                                annoState 
+                                                |> List.mapi (fun i anno -> 
+                                                    if i = index then anno.ToggleOpen()
+                                                    else {anno with IsOpen = false}
+                                                )
+                                            setState updatedAnnos                    
                                         )
-                                    setState updatedAnnos                    
-                                )
-                            ]
+                                    ]
+                                ]
+                            ] 
                         ]
-                    ] 
+                    ]
                
-                elif mapOfSameHeight[a.Height].Length = 1 && a.IsOpen = true then               
+                elif mapOfSameHeight[floor a.Height].Length = 1 && a.IsOpen = true then               
                     annotationNote index true
-                elif mapOfSameHeight[a.Height].Length > 1 &&  not (mapOfSameHeight[a.Height] |> List.exists (fun anno -> anno.IsOpen)) then
-                        Daisy.indicator [
-                            Daisy.indicatorItem [prop.text (string mapOfSameHeight[a.Height].Length); prop.className "badge badge-secondary badge-sm"]
+                elif mapOfSameHeight[floor a.Height].Length > 1 &&  not (mapOfSameHeight[floor a.Height] |> List.exists (fun anno -> anno.IsOpen)) then
+                    Daisy.indicator [
+                        prop.className "!z-0"
+                        prop.children [
+                            Daisy.indicatorItem [prop.text (string mapOfSameHeight[floor a.Height].Length); prop.className "badge badge-secondary badge-sm"]
                             Html.button [
                                 prop.className "cursor-pointer"
                                 prop.children [
@@ -267,19 +280,26 @@ type Components =
                                 ]
                             ] 
                         ]
+                    ]
+                    
 
 
-                elif mapOfSameHeight[a.Height].Length > 1 && a.IsOpen = true then 
+                elif mapOfSameHeight[floor a.Height].Length > 1 && a.IsOpen = true then 
                     Html.div [
-                        prop.className "flex flex-col gap-2 border border-3 border-secondary p-2 bg-white z-20"
+                        prop.className  "z-1"
                         prop.children [
-                            closeButton index
-                            for i in 0 .. mapOfSameHeight[a.Height].Length - 1 do
-                                let newIndex = 
-                                    annoState 
-                                    |> List.findIndex (fun anno -> anno = mapOfSameHeight[a.Height][i])
-                                annotationNote newIndex false
-                        ]
+                            Html.div [
+                                prop.className "flex flex-col gap-2 border border-3 border-secondary p-2 bg-white"
+                                prop.children [
+                                    closeButton index
+                                    for i in 0 .. mapOfSameHeight[floor a.Height].Length - 1 do
+                                        let newIndex = 
+                                            annoState 
+                                            |> List.findIndex (fun anno -> anno = mapOfSameHeight[floor a.Height][i])
+                                        annotationNote newIndex false
+                                ]
+                            ]
+                    ]
                     ]
             ]
         ]
