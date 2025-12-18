@@ -73,8 +73,7 @@ type Builder =
                       ]
                       Html.div [
                           FileUpload.UploadDisplay(filehtml,setFilehtml, setState, setFileName, setLocalFileName)
-                      ]
-                      
+                      ]    
                   ]
               ]
             ]
@@ -82,7 +81,7 @@ type Builder =
 
         let paper (width: string) (display: ReactElement) =
           Html.div [
-            prop.className "overflow-x-hidden h-screen flex flex-row gap-2 w-full relative"
+            prop.className "overflow-x-hidden overflow-y-hidden h-full flex flex-row gap-2 w-full relative p-2"
             prop.children [
               match modalState.isActive with
               |true -> Contextmenu.onContextMenu (modalContext, annoState, setState, elementID)
@@ -118,7 +117,6 @@ type Builder =
               Html.div [
                 prop.className "w-1/3"
                 prop.children [
-                  
                   Html.div [
                       prop.text "Annotations"
                       prop.className "p-2"
@@ -138,24 +136,21 @@ type Builder =
           | Unset -> ()
           | _ -> ActionBar.Main(annoState, setState, del, fileName)
           Html.div [
-            prop.className "flex flex-row"
+            prop.className "flex flex-row p-2"
             prop.id "main-parent"
             prop.onClick (fun e -> modalContext.setter initialModal)
             prop.children [
-                Html.div [
-                  prop.className "w-full p-2"
-                  prop.children [
-                    match filehtml with
-                      | Unset ->
-                        placeholder
-                      | Docx fileString ->
-                        paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
-                      | PDF fileString ->
-                        paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID annoState)
-                      | Txt fileString ->
-                        paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
-                  ]
-                ]
+
+              match filehtml with
+                | Unset ->
+                  placeholder
+                | Docx fileString ->
+                  paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
+                | PDF fileString ->
+                  paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID annoState)
+                | Txt fileString ->
+                  paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
+
               ]
             ]
         ]
