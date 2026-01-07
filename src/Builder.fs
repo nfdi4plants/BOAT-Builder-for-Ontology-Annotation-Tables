@@ -81,7 +81,7 @@ type Builder =
 
         let paper (width: string) (display: ReactElement) =
           Html.div [
-            prop.className "overflow-x-hidden overflow-y-hidden h-full flex flex-row gap-2 w-full relative p-2"
+            prop.className "overflow-y-hidden h-full flex flex-row gap-2 w-full relative p-2"
             prop.children [
               match modalState.isActive with
               |true -> Contextmenu.onContextMenu (modalContext, annoState, setState, elementID)

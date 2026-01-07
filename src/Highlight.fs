@@ -176,7 +176,11 @@ type PaperWithMarker =
       Html.div [  
         prop.custom ("data-theme", "light")  
         prop.dangerouslySetInnerHTML htmlString
-        prop.className "prose p-2 rounded-lg max-w-fit bg-base-300"  
+        // prop.style [
+        //   style.custom ("whitespace", "pre-wrap")
+        //   style.custom ("word-wrap", "break-word")
+        // ]
+        prop.className "prose p-2 rounded-lg max-w-fit bg-base-300 [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:whitespace-pre-wrap [&_code]:break-words overflow-x-au"
         prop.id elementID   
         prop.ref ref      
       ]
