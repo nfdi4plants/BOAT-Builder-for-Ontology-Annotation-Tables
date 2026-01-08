@@ -130,59 +130,63 @@ type PaperWithMarker =
         )
     )
     Html.div [
-      Daisy.modal.dialog [
-        prop.className [
-          if APIwarningModalState = true && hasClosed = false then 
-            "modal-open"
-        ]
+        prop.className "min-w-0"
         prop.children [
-          Daisy.modalBox.div [
-            Html.div [
-              Html.p "Text highlighting is not compatible with your browser."
-              Html.a [
-                  prop.text "View compatible browsers"
-                  prop.href "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility"
-                  prop.target.blank 
-                  prop.className "underline text-blue-400"
-              ]
+          Daisy.modal.dialog [
+            prop.className [
+              if APIwarningModalState = true && hasClosed = false then 
+                "modal-open"
             ]
-            Html.div [
-              prop.className "flex items-center mt-5"
-              prop.children [
-                Html.p "Don't show this again"
-                Daisy.checkbox [
-                  checkbox.sm
-                  prop.id "warningModal"
-                  // prop.checked hasClosed
-                  prop.className "ml-2"
-                  prop.onClick (fun _ ->
-                    setWarningFlag (not warningFlag) 
-                    setLocalFile "warningModal" warningFlag             
-                    )                  
+            prop.children [
+              Daisy.modalBox.div [
+                Html.div [
+                  Html.p "Text highlighting is not compatible with your browser."
+                  Html.a [
+                      prop.text "View compatible browsers"
+                      prop.href "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility"
+                      prop.target.blank 
+                      prop.className "underline text-blue-400"
+                  ]
+                ]
+                Html.div [
+                  prop.className "flex items-center mt-5"
+                  prop.children [
+                    Html.p "Don't show this again"
+                    Daisy.checkbox [
+                      checkbox.sm
+                      prop.id "warningModal"
+                      // prop.checked hasClosed
+                      prop.className "ml-2"
+                      prop.onClick (fun _ ->
+                        setWarningFlag (not warningFlag) 
+                        setLocalFile "warningModal" warningFlag             
+                        )                  
+                    ]
+                  ]
+                ]
+                Daisy.button.button [
+                  prop.className "mt-5"
+                  prop.text "Got it"
+                  prop.onClick (
+                    fun _ -> 
+                    setHasClosed (not hasClosed)
+                    )
                 ]
               ]
             ]
-            Daisy.button.button [
-              prop.className "mt-5"
-              prop.text "Got it"
-              prop.onClick (
-                fun _ -> 
-                setHasClosed (not hasClosed)
-                )
-            ]
+          ] 
+          Html.div [  
+            prop.custom ("data-theme", "light")  
+            prop.dangerouslySetInnerHTML htmlString
+            //prop.style [
+            //    style.custom ("whitespace", "pre-wrap")
+            //    style.custom ("word-wrap", "break-word")
+            //]
+            prop.className 
+                "prose p-2 rounded-lg max-w-full bg-base-300 min-w-0 [&_pre]:min-w-0 box-border [&_pre]:box-border [&_code]:box-border [&_pre]:whitespace-pre-wrap [&_code]:whitespace-pre-wrap [&_pre]:break-words [&_code]:break-words"
+            prop.id elementID   
+            prop.ref ref      
           ]
         ]
-      ] 
-      Html.div [  
-        prop.custom ("data-theme", "light")  
-        prop.dangerouslySetInnerHTML htmlString
-        // prop.style [
-        //   style.custom ("whitespace", "pre-wrap")
-        //   style.custom ("word-wrap", "break-word")
-        // ]
-        prop.className "prose p-2 rounded-lg max-w-fit bg-base-300 [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:whitespace-pre-wrap [&_code]:break-words overflow-x-au"
-        prop.id elementID   
-        prop.ref ref      
-      ]
     ]
 
