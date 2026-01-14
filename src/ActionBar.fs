@@ -15,7 +15,7 @@ module ActionBarExtensions =
 type ActionBar =
 
     [<ReactComponent>]
-    static member AnnotationModal (isActive: bool, toggleActive: bool -> unit, annoState, setAnnoState) = 
+    static member AnnotationModal (isActive: bool, toggleActive: bool -> unit, annoState, setAnnoState,  highlight, setHighlight) = 
         // Modal for displaying annotations
 
       Html.dialog [
@@ -44,7 +44,7 @@ type ActionBar =
                     match annoState = [] && isActive = true with
                     | true -> Html.h1 [prop.text "No annotations to display."]
                     | false ->
-                        PreviewTable.table(annoState, setAnnoState, toggleActive)
+                        PreviewTable.table(annoState, setAnnoState, highlight, setHighlight)
                     ]
                 ]
                 ]           ]
@@ -76,13 +76,13 @@ type ActionBar =
         ]
 
     [<ReactComponent>]
-    static member Main(annoState, setAnnoState, del: unit -> unit, fileName) =
+    static member Main(annoState, setAnnoState, del: unit -> unit, fileName,  highlight, setHighlight) =
         let showAnnotationModal, setShowAnnotationModal = React.useState(false)
         let resultsIsEmpty = List.isEmpty annoState
 
         React.fragment [
             ReactDOM.createPortal(
-            ActionBar.AnnotationModal(showAnnotationModal, setShowAnnotationModal, annoState, setAnnoState),
+            ActionBar.AnnotationModal(showAnnotationModal, setShowAnnotationModal, annoState, setAnnoState,  highlight, setHighlight),
             Browser.Dom.document.body
             )
             Html.div [
@@ -154,6 +154,12 @@ type ActionBar =
                                                 prop.text "delete all annotations"
                                                 prop.onClick (fun _ -> 
                                                     setAnnoState []
+                                                    setHighlight 
+                                                        {
+                                                            Keys = Map.empty
+                                                            Terms = Map.empty
+                                                            Values = Map.empty
+                                                        }
                                                 )
                                                 if annoState = [] then prop.className"cursor-not-allowed"
                                             ]]

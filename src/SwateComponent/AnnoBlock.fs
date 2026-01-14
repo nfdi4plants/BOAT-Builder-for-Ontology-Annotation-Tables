@@ -126,10 +126,9 @@ open Components.FunctionsContextmenu
 type Components =
     
     [<ReactComponent>]
-    static member AnnoBlockwithSwate(annoState: Annotation list, setState: Annotation list -> unit, index: int) =
+    static member AnnoBlockwithSwate(annoState: Annotation list, setState: Annotation list -> unit, index: int, highlight: Highlight, setHighlight: Highlight -> unit) =
        
         let (ui: BuildingBlock.BuildingBlockUIState, setUi) = React.useState(BuildingBlock.BuildingBlockUIState.init)        
-
         
         let a = annoState.[index] 
         let mapOfSameHeight =
@@ -145,6 +144,14 @@ type Components =
                             annoState 
                             |> List.filter ((<>) annoState[specIndex])
                             |> setState
+
+                            let newHighlight = 
+                                {
+                                    Keys = highlight.Keys |> Map.remove annoState[specIndex].Height
+                                    Terms = highlight.Terms |> Map.remove annoState[specIndex].Height
+                                    Values = highlight.Values |> Map.remove annoState[specIndex].Height
+                                }
+                            setHighlight newHighlight
                         )
                         prop.children [
                             Html.span [
@@ -192,34 +199,30 @@ type Components =
 
         let annotationNote (specIndex: int) (hasChevron: bool) =
             Html.div [
-                // prop.className  "!z-1 relative" "
+                prop.className "bg-[#ffe699] p-3 text-black w-fit"
                 prop.children [
                     Html.div [
-                        prop.className "bg-[#ffe699] p-3 text-black w-fit"
+                        prop.className "flex flex-row"
                         prop.children [
+                            if hasChevron then closeButton specIndex
                             Html.div [
-                                prop.className "flex flex-row"
+                                prop.className "space-y-2 flex flex-col gap-2"
                                 prop.children [
-                                    if hasChevron then closeButton specIndex
                                     Html.div [
-                                        prop.className "space-y-2 flex flex-col gap-2"
-                                        prop.children [
-                                            Html.div [
-                                                prop.className "flex flex-row justify-end"
-                                                prop.children [deleteButton specIndex]
-                                            ]
-                                            Searchblock.SearchElementKey (ui, setUi, annoState, setState, specIndex)
-                                            if annoState[specIndex].Search.KeyType.IsTermColumn() then
-                                                Searchblock.SearchElementBody(specIndex, annoState, setState)
-                                                valueInput specIndex
-                                        ]
+                                        prop.className "flex flex-row justify-end"
+                                        prop.children [deleteButton specIndex]
                                     ]
+                                    Searchblock.SearchElementKey (ui, setUi, annoState, setState, specIndex)
+                                    if annoState[specIndex].Search.KeyType.IsTermColumn() then
+                                        Searchblock.SearchElementBody(specIndex, annoState, setState)
+                                        valueInput specIndex
                                 ]
                             ]
-                        ]  
-                    ] 
-                ]
-            ]
+                        ]
+                    ]
+                ]  
+            ] 
+
 
         Html.div [
             prop.style [

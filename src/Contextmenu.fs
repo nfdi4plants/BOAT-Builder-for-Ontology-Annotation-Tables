@@ -63,7 +63,7 @@ module FunctionsContextmenu =
     
     // let mutable highlightTermList = initialTermhighlight "termHighlight"
     
-    let addAnnotationKeyNew (state: Annotation list, setState: Annotation list -> unit, elementID: string) ()=       
+    let addAnnotationKeyNew (state: Annotation list, setState: Annotation list -> unit, elementID: string, highlight: Highlight, setHighlight: Highlight -> unit) ()=       
         let term = window.getSelection().ToString().Trim() 
         let yCoordinateOfSelection  =
             match window.getSelection() with
@@ -76,11 +76,15 @@ module FunctionsContextmenu =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = [Annotation.init(OntologyAnnotation(term), body = CompositeCell.Term(OntologyAnnotation("")) ,highKey = term, highTerm = "", highValue ="", height = yCoordinateOfSelection)]
+            let newAnnoList = [Annotation.init(OntologyAnnotation(term), body = CompositeCell.Term(OntologyAnnotation("")), height = yCoordinateOfSelection)]
 
             setState (List.append closedList newAnnoList)
-            // let newAnnoList = Annotation.init(OntologyAnnotation(term), height = yCoordinateOfSelection)::state
-            // setState newAnnoList
+
+            let newKeys =
+                highlight.Keys
+                |> Map.add yCoordinateOfSelection term
+
+            setHighlight {highlight with Keys = newKeys}
 
         else 
             ()
@@ -90,7 +94,7 @@ module FunctionsContextmenu =
         Browser.Dom.window.getSelection().removeAllRanges()  
 
         
-    let addAnnotationBodyNew (state: Annotation list, setState: Annotation list -> unit, elementID: string) ()=  
+    let addAnnotationBodyNew (state: Annotation list, setState: Annotation list -> unit, elementID: string, highlight: Highlight, setHighlight: Highlight -> unit) ()=  
         let term = window.getSelection().ToString().Trim()      
         let yCoordinateOfSelection  =
             match window.getSelection() with
@@ -104,12 +108,16 @@ module FunctionsContextmenu =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = [Annotation.init(OntologyAnnotation(""), body = CompositeCell.Term(OntologyAnnotation(term)), highKey = "", highTerm = term, highValue = "", height = yCoordinateOfSelection)]
+            let newAnnoList = [Annotation.init(OntologyAnnotation(""), body = CompositeCell.Term(OntologyAnnotation(term)), height = yCoordinateOfSelection)]
 
 
             setState (List.append closedList newAnnoList)
-        // let newAnnoList = Annotation.init(value = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)::state
-        // setState newAnnoList
+
+            let newTerms =
+                highlight.Terms
+                |> Map.add yCoordinateOfSelection term
+
+            setHighlight {highlight with Terms = newTerms}
             
         else 
             ()
@@ -118,7 +126,7 @@ module FunctionsContextmenu =
 
         Browser.Dom.window.getSelection().removeAllRanges()   
 
-    let addAnnotationValueNew (state: Annotation list, setState: Annotation list -> unit, elementID: string) ()=  
+    let addAnnotationValueNew (state: Annotation list, setState: Annotation list -> unit, elementID: string, highlight: Highlight, setHighlight: Highlight -> unit) ()=  
         let term = window.getSelection().ToString().Trim()      
         let yCoordinateOfSelection  =
             match window.getSelection() with
@@ -132,12 +140,16 @@ module FunctionsContextmenu =
 
         if term.Length <> 0 then
             let closedList = state |> List.map (fun a -> {a with IsOpen = false}) 
-            let newAnnoList = [Annotation.init(OntologyAnnotation(""), body = CompositeCell.Unitized(term,OntologyAnnotation("")), highKey = "", highTerm = "", highValue = term,height = yCoordinateOfSelection)]
+            let newAnnoList = [Annotation.init(OntologyAnnotation(""), body = CompositeCell.Unitized(term,OntologyAnnotation("")),height = yCoordinateOfSelection)]
 
 
             setState (List.append closedList newAnnoList)
-        // let newAnnoList = Annotation.init(value = CompositeCell.createFreeText(term), height = yCoordinateOfSelection)::state
-        // setState newAnnoList
+
+            let newValues =
+                highlight.Values
+                |> Map.add yCoordinateOfSelection term
+
+            setHighlight {highlight with Values = newValues}
             
         else 
             ()
@@ -147,12 +159,12 @@ module FunctionsContextmenu =
         Browser.Dom.window.getSelection().removeAllRanges()   
        
 
-    let addToLastAnnoAsKey(state: Annotation list, setState: Annotation list -> unit) () =
+    let addToLastAnnoAsKey(state: Annotation list, setState: Annotation list -> unit, highlight: Highlight, setHighlight: Highlight -> unit) () =
         let term = window.getSelection().ToString().Trim()
         if term.Length <> 0 then 
 
             let updatetedAnno = 
-                {state.[state.Length - 1] with Search.Key = OntologyAnnotation(name = term); HighlightKeys = term}
+                {state.[state.Length - 1] with Search.Key = OntologyAnnotation(name = term)}
 
             let newAnnoList =
                 state
@@ -160,15 +172,22 @@ module FunctionsContextmenu =
 
             setState newAnnoList
 
-    let addToLastAnnoAsBody(state: Annotation list, setState: Annotation list -> unit) () =
+            let newKeys =
+                let height = state.[state.Length - 1].Height
+                highlight.Keys
+                |> Map.add height term
+
+            setHighlight {highlight with Keys = newKeys}
+
+    let addToLastAnnoAsBody(state: Annotation list, setState: Annotation list -> unit, highlight: Highlight, setHighlight: Highlight -> unit) () =
         let term = window.getSelection().ToString().Trim()
         if term.Length <> 0 then 
             let updatetedAnno =
                 match state.[state.Length - 1].Search.Body with
                 | CompositeCell.Unitized (v, oa) ->
-                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(v, OntologyAnnotation(term)); HighlightTerms = term; HighlightValues = v }
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(v, OntologyAnnotation(term))}
                 | _ ->
-                    {state.[state.Length - 1] with Search.Body = CompositeCell.Term(OntologyAnnotation(term)); HighlightTerms = term}
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Term(OntologyAnnotation(term))}
 
             let newAnnoList =
                 state
@@ -176,17 +195,24 @@ module FunctionsContextmenu =
 
             setState newAnnoList
 
-    let addToLastAnnoAsValue(state: Annotation list, setState: Annotation list -> unit) () =
+            let newTerms =
+                let height = state.[state.Length - 1].Height
+                highlight.Terms
+                |> Map.add height term
+
+            setHighlight {highlight with Terms = newTerms}
+
+    let addToLastAnnoAsValue(state: Annotation list, setState: Annotation list -> unit,  highlight: Highlight, setHighlight: Highlight -> unit) () =
         let term = window.getSelection().ToString().Trim()
         if term.Length <> 0 then 
             let updatetedAnno = 
                 match state.[state.Length - 1].Search.Body with
                 | CompositeCell.Term oa ->
-                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term, OntologyAnnotation(oa.NameText)); HighlightTerms = oa.NameText; HighlightValues = term }
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term, OntologyAnnotation(oa.NameText))}
                 | CompositeCell.Unitized (v, oa) ->
-                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term, OntologyAnnotation(oa.NameText)); HighlightTerms = oa.NameText; HighlightValues = term }
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term, OntologyAnnotation(oa.NameText))}
                 | _ ->
-                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term, OntologyAnnotation("")); HighlightValues = term }
+                    {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term, OntologyAnnotation(""))}
                 // {state.[state.Length - 1] with Search.Body = CompositeCell.Unitized(term,OntologyAnnotation(state.[state.Length - 1].Search.Body.ToString())); HighlightTerms = term}
 
             let newAnnoList =
@@ -195,30 +221,37 @@ module FunctionsContextmenu =
 
             setState newAnnoList
 
+            let newValues =
+                let height = state.[state.Length - 1].Height
+                highlight.Values
+                |> Map.add height term
+
+            setHighlight {highlight with Values = newValues}
+
 
 open Helper
 
 open FunctionsContextmenu
 
 module Contextmenu =
-    let private contextmenu (mousex: float, mousey: float) (resetter: unit -> unit, state: Annotation list, setState: Annotation list -> unit, elementID:string)=
+    let private contextmenu (mousex: float, mousey: float) (resetter: unit -> unit, state: Annotation list, setState: Annotation list -> unit, elementID:string, highlight: Highlight, setHighlight: Highlight -> unit )=
         /// This element will remove the contextmenu when clicking anywhere else
         let buttonList = [
             Html.div [ 
                 prop.className "text-gray-500 text-sm p-1"
                 prop.text "Add new annotation as .."
             ]
-            button ("Key", resetter, state, addAnnotationKeyNew(state, setState, elementID ), [])
-            button ("Term", resetter,state, addAnnotationBodyNew(state, setState,elementID), []) 
-            button ("Value", resetter,state, addAnnotationValueNew(state, setState,elementID), [])
+            button ("Key", resetter, state, addAnnotationKeyNew(state, setState, elementID, highlight, setHighlight), [])
+            button ("Term", resetter,state, addAnnotationBodyNew(state, setState,elementID, highlight, setHighlight), []) 
+            button ("Value", resetter,state, addAnnotationValueNew(state, setState,elementID, highlight, setHighlight), [])
             divider
             Html.div [ 
                 prop.className "text-gray-500 text-sm p-1"
                 prop.text "Add to last annotation as .."
             ]
-            button ("Key", resetter,state, addToLastAnnoAsKey(state, setState),  [])
-            button ("Term", resetter,state, addToLastAnnoAsBody(state, setState),  [])
-            button ("Value", resetter,state, addToLastAnnoAsValue(state, setState),  [])
+            button ("Key", resetter,state, addToLastAnnoAsKey(state, setState, highlight, setHighlight),  [])
+            button ("Term", resetter,state, addToLastAnnoAsBody(state, setState, highlight, setHighlight),  [])
+            button ("Value", resetter,state, addToLastAnnoAsValue(state, setState, highlight, setHighlight),  [])
         ]
         Html.div [
             prop.tabIndex 0
@@ -242,11 +275,10 @@ module Contextmenu =
                 location = (0.0,0.0)
             }
 
-    let onContextMenu (modalContext:DropdownModal, state: Annotation list, setState: Annotation list -> unit, elementID:string) = 
+    let onContextMenu (modalContext:DropdownModal, state: Annotation list, setState: Annotation list -> unit, elementID:string, highlight: Highlight, setHighlight: Highlight -> unit) = 
         let resetter = fun () -> modalContext.setter initialModal //add actual function
         // let rmv = modalContext.setter initialModal 
-        contextmenu (modalContext.modalState.location) (resetter, state, setState,elementID)
-
+        contextmenu (modalContext.modalState.location) (resetter, state, setState,elementID, highlight, setHighlight)
 
 
     
