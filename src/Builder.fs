@@ -6,6 +6,7 @@ open Browser.Types
 open Types
 open Fable.SimpleJson
 open Fable.Core.JS
+open FSharp.Collections
 open Feliz.DaisyUI
 open System
 open ARCtrl
@@ -54,6 +55,12 @@ type Builder =
 
         let turnOffContext (event: Browser.Types.Event) = 
             modalContext.setter initialModal 
+
+        let (highlight: Highlight), setHighlight = React.useState ({
+            Keys = Map.empty
+            Terms = Map.empty
+            Values = Map.empty
+        })
             
         React.useEffectOnce(fun () ->
             Browser.Dom.window.addEventListener ("resize", turnOffContext)
@@ -71,6 +78,7 @@ type Builder =
                           prop.className "my-2"
                           prop.text "Select file here:"
                       ]
+                      
                       Html.div [
                           FileUpload.UploadDisplay(filehtml,setFilehtml, setState, setFileName, setLocalFileName)
                       ]    
@@ -81,10 +89,10 @@ type Builder =
 
         let paper (width: string) (display: ReactElement) =
           Html.div [
-            prop.className "overflow-x-hidden overflow-y-hidden h-full flex flex-row gap-2 w-full relative p-2"
+            prop.className "overflow-y-hidden h-full flex flex-row gap-2 w-full relative p-2"
             prop.children [
               match modalState.isActive with
-              |true -> Contextmenu.onContextMenu (modalContext, annoState, setState, elementID)
+              |true -> Contextmenu.onContextMenu (modalContext, annoState, setState, elementID, highlight, setHighlight)
               |false -> Html.none
               Html.div [
                 prop.className [
@@ -125,7 +133,7 @@ type Builder =
                     ]
                   ]
                   for a in 0 .. annoState.Length - 1 do
-                      App.Components.AnnoBlockwithSwate(annoState, setState, a)    
+                      App.Components.AnnoBlockwithSwate(annoState, setState, a, highlight, setHighlight)    
                 ]
               ]
             ]
@@ -134,7 +142,7 @@ type Builder =
         React.fragment [
           match filehtml with
           | Unset -> ()
-          | _ -> ActionBar.Main(annoState, setState, del, fileName)
+          | _ -> ActionBar.Main(annoState, setState, del, fileName,  highlight, setHighlight)
           Html.div [
             prop.className "flex flex-row p-2"
             prop.id "main-parent"
@@ -145,11 +153,11 @@ type Builder =
                 | Unset ->
                   placeholder
                 | Docx fileString ->
-                  paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
+                  paper "w-2/3" (FileUpload.DisplayHtml(fileString, highlight, elementID, isLocalStorageClear))
                 | PDF fileString ->
-                  paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID annoState)
+                  paper "" (FileUpload.DisplayPDF fileString setNumPages numPages elementID highlight)
                 | Txt fileString ->
-                  paper "w-2/3" (FileUpload.DisplayHtml(fileString, annoState, elementID, isLocalStorageClear))
+                  paper "w-2/3" (FileUpload.DisplayHtml(fileString, highlight, elementID, isLocalStorageClear))
 
               ]
             ]

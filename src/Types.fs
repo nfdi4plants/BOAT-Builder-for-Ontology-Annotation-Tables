@@ -78,12 +78,10 @@ type Annotation =
     IsOpen: bool
     Search: SearchComponent
     Height: float
-    HighlightKeys: string
-    HighlightTerms: string
-    HighlightValues: string
-    } 
+    }
 
-    static member init (key, body , highKey, highTerm, highValue, ?keyType, ?isOpen,  ?search, ?height ) = 
+
+    static member init (key, body, ?keyType, ?isOpen,  ?search, ?height ) = 
         let isOpen = defaultArg isOpen true
         let keyType = defaultArg keyType CompositeHeaderDiscriminate.Parameter
         let search = defaultArg search {
@@ -96,11 +94,16 @@ type Annotation =
             IsOpen= isOpen
             Search = search
             Height= height
-            HighlightKeys = highKey
-            HighlightTerms = highTerm
-            HighlightValues = highValue
         }
     member this.ToggleOpen () = {this with IsOpen = not this.IsOpen}
+
+
+type Highlight =
+    {
+    Keys: Map<float,string>
+    Terms: Map<float,string>
+    Values: Map<float,string>
+    }
 
 type ModalInfo = {
     isActive: bool

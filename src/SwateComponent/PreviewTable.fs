@@ -9,7 +9,7 @@ open Components.FunctionsContextmenu
 
 module PreviewTable =
 
-    let table (annoState: Annotation list, setState: Annotation list -> unit, toggleActive) =
+    let table (annoState: Annotation list, setState: Annotation list -> unit, highlight, setHighlight) =
         Html.div [
             // prop.className "table border border-black max-w-full"
             prop.children [
@@ -64,6 +64,14 @@ module PreviewTable =
                                                     prop.onClick (fun _ -> 
                                                         let newAnnoList: Annotation list = annoState |> List.filter (fun x -> x = annoState[a] |> not)  
                                                         setState newAnnoList
+
+                                                        let newHighlight = 
+                                                            {
+                                                                Keys = highlight.Keys |> Map.remove annoState[a].Height
+                                                                Terms = highlight.Terms |> Map.remove annoState[a].Height
+                                                                Values = highlight.Values |> Map.remove annoState[a].Height
+                                                            }
+                                                        setHighlight newHighlight
                                                        
                                                             )
                                                     prop.children [

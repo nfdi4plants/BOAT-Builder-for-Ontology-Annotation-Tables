@@ -148,38 +148,47 @@ module private FileReaderHelper =
 
 module Lists =
 
-  let keyList (annoList: Annotation list)= 
-    annoList 
-    |> List.map (fun a -> a.HighlightKeys) //maps the key names to a list
-    |> List.toArray
-    |> Array.filter (fun a -> a <> "") //filters out empty strings
+  let keyList (highlight: Highlight)= 
+    highlight.Keys
+    |> Map.toArray
+    |> Array.map snd
+
+  let termList (highlight: Highlight)= 
+    highlight.Terms
+    |> Map.toArray
+    |> Array.map snd
+
+  let valueList (highlight: Highlight)= 
+    highlight.Values
+    |> Map.toArray
+    |> Array.map snd
+
+  // let termlist (annoList: Annotation list) = 
+  //   annoList
+  //   |> List.collect (fun a -> a.Highlight.Terms |> Map.toList |> List.map snd)
+  //   |> List.toArray
+  //   |> Array.filter (fun term -> term <> "")
+
     
-     //filters out empty strings
 
-  let termlist (annoList: Annotation list) = 
-    annoList 
-    |> List.map (fun a -> a.HighlightTerms)
-    |> List.toArray
-    |> Array.filter (fun a -> a <> "")
-
-  let valuelist (annoList: Annotation list) =
-    annoList
-    |> List.map (fun a -> a.HighlightValues)
-    |> List.toArray
-    |> Array.filter (fun a -> a <> "")
+  // let valuelist (annoList: Annotation list) =
+  //   annoList
+  //   |> List.map (fun a -> a.HighlightValues)
+  //   |> List.toArray
+  //   |> Array.filter (fun a -> a <> "")
 
 type FileUpload =
-    static member DisplayHtml(htmlString: string, annoList: Annotation list, elementID: string, isLocalStorageClear) = 
+    static member DisplayHtml(htmlString: string, highList: Highlight, elementID: string, isLocalStorageClear) = 
       Html.div [
         prop.className "flex justify-end"
         prop.children [
-          PaperWithMarker.Main(htmlString, Lists.keyList annoList, Lists.termlist annoList, Lists.valuelist annoList, elementID, isLocalStorageClear)
+          PaperWithMarker.Main(htmlString, Lists.keyList highList, Lists.termList highList, Lists.valueList highList, elementID, isLocalStorageClear)
         ]
       ]
 
     [<ReactComponent>]
   //  https://stackoverflow.com/a/60539836/12858021
-    static member DisplayPDF filehtml setNumPages (numPages: int option) (elementID: string) annoList  =
+    static member DisplayPDF filehtml setNumPages (numPages: int option) (elementID: string) (highList: Highlight)  =
 
       let highlightPattern(text: string, anno: string, colorcode) = 
         text.Replace(anno, sprintf "<mark style='background-color: %s'>%s</mark>" colorcode anno)
@@ -190,14 +199,15 @@ type FileUpload =
         React.useCallback(
           (fun text -> 
             let mutable txt = text?str
-            for a in Lists.keyList annoList do
+            for a in Lists.keyList highList do
               txt <- highlightPattern(txt, a, "#ffe699")
-              log Lists.keyList
-            for a in Lists.valuelist annoList do
+            for a in Lists.termList highList do
               txt <- highlightPattern(txt, a, "#4fb3d9")
+            for a in Lists.valueList highList do
+              txt <- highlightPattern(txt, a, "#4fd984")
             txt
           ),
-          [|box annoList|]
+          [|box highList|]
         )
 
       Html.div [
